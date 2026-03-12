@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Agent FCC Demo</title>
+    <meta
+      name="description"
+      content="Static dashboard for the WGU agent stacks demo."
+    />
+    <style>
+      html, body, #root {
+        min-height: 100%;
+      }
+
+      body {
+        margin: 0;
+        background: #f4f5f7;
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>This dashboard requires JavaScript.</noscript>
+    <div id="root"></div>
+
+    <script
+      crossorigin
+      src="https://unpkg.com/react@18/umd/react.production.min.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+    ></script>
+    <script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
+    <script
+      type="text/babel"
+      data-presets="env,react"
+      src="./app.jsx"
+    ></script>
+  </body>
+</html>

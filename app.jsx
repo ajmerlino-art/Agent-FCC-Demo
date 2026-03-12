@@ -1,16 +1,7 @@
 const { useState, useRef, useEffect } = React;
 
-const ANTHROPIC_API_KEY_STORAGE = "agent-fcc-demo:anthropic-api-key";
-const ANTHROPIC_MODEL = "claude-sonnet-4-20250514";
-const ANTHROPIC_VERSION = "2023-06-01";
-
-function loadStoredApiKey() {
-  try {
-    return window.localStorage.getItem(ANTHROPIC_API_KEY_STORAGE) || "";
-  } catch {
-    return "";
-  }
-}
+const LOCAL_ENGINE_NAME = "Local Demo Engine";
+const DEMO_SOURCE_URL = "https://github.com/ajmerlino-art/Agent-FCC-Demo/blob/main/README.md";
 
 // ─── AGENT DEFINITIONS ────────────────────────────────────────────────────────
 
@@ -491,71 +482,656 @@ Next Step: [One concrete action, named owner, specific date or timeframe]`
   }
 };
 
-// ─── API ──────────────────────────────────────────────────────────────────────
+// ─── LOCAL ENGINE ─────────────────────────────────────────────────────────────
 
-async function callClaude(systemPrompt, userMessage, apiKey, retries = 3) {
-  const trimmedApiKey = apiKey?.trim();
-  if (!trimmedApiKey) {
-    return {
-      text: null,
-      error: "Anthropic API key missing. Add it in the Anthropic API panel before running a stack."
-    };
+const STOPWORDS = new Set([
+  "about", "after", "again", "against", "align", "along", "also", "because",
+  "before", "being", "between", "challenge", "current", "could", "deliver",
+  "focus", "from", "goal", "goals", "have", "into", "just", "make", "more",
+  "most", "need", "needs", "next", "only", "over", "problem", "program",
+  "should", "that", "their", "them", "then", "there", "these", "this",
+  "those", "through", "toward", "under", "using", "want", "what", "when",
+  "where", "which", "while", "with", "within", "would", "your"
+]);
+
+function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function normalizeText(text = "") {
+  return text.replace(/\s+/g, " ").trim();
+}
+
+function clipWords(text, count) {
+  return normalizeText(text).split(" ").slice(0, count).join(" ").trim();
+}
+
+function toTitleCase(text) {
+  return normalizeText(text)
+    .toLowerCase()
+    .split(" ")
+    .filter(Boolean)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function formatDate(date) {
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  });
+}
+
+function extractChallenge(userMessage) {
+  let body = userMessage;
+  const prefixes = ["Challenge/Goal:", "Original challenge:"];
+
+  for (const prefix of prefixes) {
+    const idx = body.indexOf(prefix);
+    if (idx !== -1) {
+      body = body.slice(idx + prefix.length);
+      break;
+    }
   }
 
-  for (let attempt = 1; attempt <= retries; attempt++) {
-    try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": trimmedApiKey,
-          "anthropic-version": ANTHROPIC_VERSION
-        },
-        body: JSON.stringify({
-          model: ANTHROPIC_MODEL,
-          max_tokens: 1800,
-          system: systemPrompt,
-          messages: [{ role: "user", content: userMessage }]
-        })
-      });
-      if (res.status === 502 || res.status === 503 || res.status === 429) {
-        if (attempt < retries) {
-          await new Promise(r => setTimeout(r, 1500 * attempt));
-          continue;
-        }
-        return { text: null, error: `API error ${res.status} after ${retries} attempts. Please try again.` };
-      }
-      if (!res.ok) {
-        const rawError = await res.text();
-        let message = rawError;
+  const markers = [
+    "\n\nPrevious agent outputs:",
+    "\n\nAll agent context so far:",
+    "\n\nAgent outputs:",
+    "\n\nAvenger outputs:",
+    "\n\nCurrent ",
+    "\n\nYour previous output:",
+    "\n\nRevision request:"
+  ];
 
-        try {
-          const parsed = JSON.parse(rawError);
-          message = parsed.error?.message || parsed.error?.type || parsed.message || rawError;
-        } catch {
-          message = rawError;
-        }
+  let end = body.length;
+  for (const marker of markers) {
+    const idx = body.indexOf(marker);
+    if (idx !== -1 && idx < end) end = idx;
+  }
 
-        if (res.status === 401 || res.status === 403) {
-          message = `Check the API key and Anthropic workspace permissions. ${message}`.trim();
-        }
+  return normalizeText(body.slice(0, end)) || "the current challenge";
+}
 
-        return { text: null, error: `API error ${res.status}: ${String(message).slice(0, 300)}` };
-      }
-      const data = await res.json();
-      const text = data.content?.map(b => b.text || "").join("") || "";
-      if (!text) return { text: null, error: "Empty response from API." };
-      return { text, error: null };
-    } catch (e) {
-      if (attempt < retries) {
-        await new Promise(r => setTimeout(r, 1500 * attempt));
-        continue;
-      }
-      const suffix = e.message === "Failed to fetch"
-        ? " Serve the repo over http(s) and confirm outbound access to api.anthropic.com."
-        : "";
-      return { text: null, error: `Network error: ${e.message}.${suffix}` };
+function extractRevisionRequest(userMessage) {
+  const marker = "\n\nRevision request:";
+  const idx = userMessage.indexOf(marker);
+  return idx === -1 ? "" : normalizeText(userMessage.slice(idx + marker.length));
+}
+
+function extractKeywords(text, limit = 6) {
+  const counts = new Map();
+  const tokens = normalizeText(text).toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+
+  for (const token of tokens) {
+    if (token.length < 4 || STOPWORDS.has(token)) continue;
+    counts.set(token, (counts.get(token) || 0) + 1);
+  }
+
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, limit)
+    .map(([token]) => token);
+}
+
+function detectStakeholders(lower) {
+  const stakeholders = [];
+
+  if (/student/.test(lower)) stakeholders.push("students");
+  if (/faculty|instructor|course/.test(lower)) stakeholders.push("faculty");
+  if (/mentor|advisor|coach|staff/.test(lower)) stakeholders.push("frontline staff");
+  if (/leader|leadership|executive|dean/.test(lower)) stakeholders.push("leadership");
+  if (/employer|industry|career|hiring/.test(lower)) stakeholders.push("employers");
+
+  if (!stakeholders.length) {
+    stakeholders.push("students", "faculty", "program leadership");
+  }
+
+  return [...new Set(stakeholders)];
+}
+
+function joinWithAnd(values) {
+  if (values.length <= 1) return values[0] || "";
+  if (values.length === 2) return `${values[0]} and ${values[1]}`;
+  return `${values.slice(0, -1).join(", ")}, and ${values[values.length - 1]}`;
+}
+
+function detectOwner(lower) {
+  if (/career|employer|industry/.test(lower)) return "Employer engagement lead";
+  if (/student|mentor|advisor|retention/.test(lower)) return "Student success lead";
+  if (/faculty|course|curriculum/.test(lower)) return "Program chair";
+  return "Program lead";
+}
+
+function detectConstraints(lower) {
+  const constraints = [];
+
+  if (/budget|cost|fund/.test(lower)) constraints.push("no new budget");
+  if (/tool|system|platform|software/.test(lower)) constraints.push("current tools only");
+  if (/time|capacity|bandwidth|staffing/.test(lower)) constraints.push("limited staff capacity");
+
+  if (!constraints.length) {
+    constraints.push("existing staff time", "current tools", "no new budget");
+  }
+
+  return joinWithAnd(constraints);
+}
+
+function detectTimeframe(lower) {
+  if (/week/.test(lower)) return "the next 7 days";
+  if (/term|semester|quarter/.test(lower)) return "this academic term";
+  if (/month/.test(lower)) return "the next 30 days";
+  return "the next 14 days";
+}
+
+function detectSuccess(lower, keywords) {
+  if (/retention|persist|drop/.test(lower)) return "a measurable reduction in preventable drop-off";
+  if (/engagement|participation|attendance/.test(lower)) return "higher participation and clearer follow-through";
+  if (/enroll|admission|recruit|conversion/.test(lower)) return "stronger conversion with less confusion";
+  if (/career|employ|skill|workforce/.test(lower)) return "clearer evidence of employer-relevant skill growth";
+  return `a measurable improvement in ${keywords[0] || "the target workflow"}`;
+}
+
+function detectRoleType(lower) {
+  if (/career|employ|industry|workforce/.test(lower)) return "Workforce strategy analyst";
+  if (/faculty|course|curriculum|student/.test(lower)) return "Learning experience designer / program manager";
+  return "Operations and program improvement lead";
+}
+
+function detectJobPhrase(lower) {
+  if (/career|employ|industry/.test(lower)) return "translate ambiguous needs into measurable workforce-facing outcomes";
+  if (/student|faculty|learning|course/.test(lower)) return "design and improve user-centered learning workflows";
+  return "turn ambiguous stakeholder needs into measurable process improvements";
+}
+
+function buildProfile(challenge, revisionRequest = "") {
+  const normalized = normalizeText(challenge);
+  const lower = normalized.toLowerCase();
+  const firstSentence = normalized.split(/(?<=[.!?])\s+/)[0] || normalized;
+  const keywords = extractKeywords(normalized);
+  const stakeholders = detectStakeholders(lower);
+  const challengeLabel = toTitleCase(clipWords(firstSentence.replace(/[^a-zA-Z0-9\s-]/g, ""), 6)) || "Agent Stack Opportunity";
+
+  return {
+    challenge: normalized || "the current challenge",
+    challengeLabel,
+    firstSentence,
+    lower,
+    keywords,
+    focusArea: clipWords(firstSentence, 10) || "the current challenge",
+    focusPair: keywords.slice(0, 2).join(" and ") || "the current workflow",
+    stakeholders,
+    audience: joinWithAnd(stakeholders),
+    primaryStakeholder: stakeholders[0] || "stakeholders",
+    owner: detectOwner(lower),
+    timeframe: detectTimeframe(lower),
+    constraints: detectConstraints(lower),
+    success: detectSuccess(lower, keywords),
+    roleType: detectRoleType(lower),
+    jobPhrase: detectJobPhrase(lower),
+    revisionRequest,
+    revisionFocus: revisionRequest ? clipWords(revisionRequest, 12) : ""
+  };
+}
+
+function revisionTail(profile, prefix = "with explicit attention to") {
+  return profile.revisionFocus ? ` ${prefix} ${profile.revisionFocus}` : "";
+}
+
+function pickAnalogies(profile) {
+  const pool = [
+    { field: "theater", title: "Rehearsal Pass", lesson: "stage the experience before it goes live so the weak handoff becomes visible" },
+    { field: "ecology", title: "Signal Garden", lesson: "add small, repeated signals that shape behavior early instead of relying on one large intervention" },
+    { field: "architecture", title: "Blueprint Pass", lesson: "simplify the blueprint before anyone adds more structure" },
+    { field: "medicine", title: "Triage Lane", lesson: "surface the highest-risk cases early so scarce attention goes to the right place first" },
+    { field: "jazz", title: "Improvisation Window", lesson: "give teams a tight structure with room for fast adaptation at the edge" }
+  ];
+  const offset = profile.keywords.reduce((sum, word) => sum + word.charCodeAt(0), 0) % pool.length;
+  return pool.map((_, index) => pool[(offset + index) % pool.length]);
+}
+
+function extractIdeaTitles(text) {
+  const titles = [];
+  const regex = /IDEA\s+\d+:\s*([^\[\n]+)/g;
+  let match;
+
+  while ((match = regex.exec(text))) {
+    titles.push(normalizeText(match[1]));
+  }
+
+  return titles;
+}
+
+function extractTestedIdea(text) {
+  const match = text.match(/IDEA BEING TESTED:\s*(.+)/);
+  return match ? normalizeText(match[1]) : "";
+}
+
+function generateReframer(profile) {
+  return `FRAMING 1: Experience Design Gap
+Instead of treating ${profile.focusArea} as a broad strategy problem, frame it as the first critical moment where ${profile.primaryStakeholder} lose clarity or momentum${revisionTail(profile)}.
+Why this matters: It opens low-cost fixes to sequencing, language, and support before leadership invests in a larger redesign.
+
+FRAMING 2: Capacity Allocation Gap
+Treat ${profile.focusArea} as a staffing and attention-shaping problem: where should limited time move first so the highest-friction step gets handled well?
+Why this matters: It creates options around workload, ownership, and escalation rather than assuming the answer is a new initiative.
+
+FRAMING 3: Evidence Signal Gap
+Frame ${profile.focusArea} as a proof problem: what would leadership need to see in one short cycle to believe this is improving?
+Why this matters: It opens a micro-test path, which is faster and more defensible than arguing abstractly about value.`;
+}
+
+function generateDivergence(profile) {
+  const analogies = pickAnalogies(profile);
+  const ideas = [
+    {
+      title: "Clear-Start Script",
+      description: `Write a one-page script for the first high-friction moment in ${profile.focusArea}. It gives ${profile.audience} the same opening language and makes inconsistency visible within a week.`
+    },
+    {
+      title: "Seven-Day Signal Board",
+      description: `Create a lightweight tracker with only two measures: participation and visible outcome. That keeps the team focused on whether ${profile.success} is actually moving instead of debating anecdotes.`
+    },
+    {
+      title: "Edge-Case Review",
+      description: `Review the five hardest recent cases related to ${profile.focusPair}. The point is to design for the breakdowns first so the standard experience becomes easier for everyone else.`
+    },
+    {
+      title: analogies[0].title,
+      analogy: analogies[0].field,
+      description: `Borrow from ${analogies[0].field}: ${analogies[0].lesson}. Run a dry rehearsal of the workflow with the people who actually own the handoff and revise the script immediately afterward.`
+    },
+    {
+      title: analogies[1].title,
+      analogy: analogies[1].field,
+      description: `Borrow from ${analogies[1].field}: ${analogies[1].lesson}. Add three small signals that nudge the desired action before the workflow stalls.`
+    },
+    {
+      title: analogies[2].title,
+      analogy: analogies[2].field,
+      description: `Borrow from ${analogies[2].field}: ${analogies[2].lesson}. Strip the process down to the minimum visible steps and remove anything that does not help ${profile.primaryStakeholder} decide or act.`
+    },
+    {
+      title: analogies[3].title,
+      analogy: analogies[3].field,
+      description: `Borrow from ${analogies[3].field}: ${analogies[3].lesson}. Define an early-warning rule so the team can intervene before confusion compounds.`
+    },
+    {
+      title: analogies[4].title,
+      analogy: analogies[4].field,
+      description: `Borrow from ${analogies[4].field}: ${analogies[4].lesson}. Give frontline staff one non-negotiable structure and one place where they can adapt in real time.`
+    },
+    {
+      title: "Peer Proof Gallery",
+      description: `Capture three concrete examples of the desired behavior or outcome and display them where the team works. That turns the abstract goal into something staff and leaders can quickly compare against.`
+    },
+    {
+      title: "Rule-of-Three Executive Review",
+      description: `End each week with a three-line review: what changed, what stayed stuck, and what should be tested next. It keeps leadership involved without creating reporting overhead.`
     }
+  ];
+
+  return ideas.map((idea, index) => {
+    const analogy = idea.analogy ? ` [ANALOGY: ${idea.analogy}]` : "";
+    return `IDEA ${index + 1}: ${idea.title}${analogy}
+${idea.description}`;
+  }).join("\n\n");
+}
+
+function generateContrarian(profile, userMessage) {
+  const ideas = extractIdeaTitles(userMessage).slice(0, 3);
+  const selected = ideas.length ? ideas : ["Clear-Start Script", "Seven-Day Signal Board", "Rehearsal Pass"];
+  const verdicts = ["KEEP", "REVISE", "KEEP"];
+
+  return selected.map((idea, index) => `IDEA: ${idea}
+Academic Risk: If ownership is vague, the team may interpret this as another pilot layered on top of current work instead of a cleaner way to do existing work.
+Industry Risk: If the output never leaves the WGU context, employers or external partners may not see why the change matters beyond internal process hygiene.
+Bias: This idea assumes the main blockage is clarity. If the real issue is capacity or policy, clarity alone will not move the result.
+Genericity: The move is only novel if the team actually simplifies the workflow and measures the change; otherwise it collapses into another meeting artifact.
+Verdict: ${verdicts[index] || "REVISE"} - ${index === 1 ? "Keep the core idea, but tighten the owner and metric before using it." : "This is worth testing because it is fast, visible, and compatible with current constraints."}`).join("\n\n");
+}
+
+function generateMeasurement(profile, userMessage) {
+  const idea = extractTestedIdea(userMessage) || extractIdeaTitles(userMessage)[0] || "Clear-Start Script";
+  const start = new Date();
+  const end = new Date(start);
+  end.setDate(end.getDate() + 7);
+
+  return `IDEA BEING TESTED: ${idea}
+Owner: ${profile.owner}
+Test Window: ${formatDate(start)} to ${formatDate(end)}
+
+Participation Metric: Number of ${profile.primaryStakeholder} who complete the new workflow step
+Baseline: No structured count captured today → Target: 12 completions during the week
+
+Outcome Metric: Share of participants who report the step felt clearer and easier to act on
+Baseline: No clarity score captured today → Target: 80% positive responses
+
+Protocol: Launch the revised workflow with one team and one defined audience segment. Capture participation daily, ask one clarity question at the end of the interaction, and review the results at the midpoint and the end of the week.
+
+Success Criteria: Continue if the team hits at least 12 completions, 80% positive clarity, and one operational lesson that can be reused in the next cycle.`;
+}
+
+function generateTranslator(profile, userMessage) {
+  const idea = extractTestedIdea(userMessage) || extractIdeaTitles(userMessage)[0] || "the tested workflow";
+  return `Role Type: ${profile.roleType}
+Job Posting Phrase: ${profile.jobPhrase}
+
+Employability Statement:
+"I translated an ambiguous stakeholder challenge into a one-week pilot for ${idea}, set baseline and target metrics, and produced evidence that improved decision quality and workflow clarity."
+
+Alignment: This work demonstrates the kind of structured problem-solving employers ask for when they want people who can move from ambiguity to action. It also shows measurable execution, which makes the creativity visible as a business-relevant skill instead of a vague trait.`;
+}
+
+function generateFred(profile) {
+  return `WORKING BRIEF:
+Problem: ${profile.challenge}. The immediate task is to produce a response that improves clarity, ownership, and measurable follow-through for ${profile.primaryStakeholder}.
+Audience: ${profile.audience}
+Success looks like: ${profile.success}
+Output format: Action plan with milestones, risks, and one near-term pilot
+
+AGENT ASSIGNMENTS:
+Velma → What baseline evidence is missing, and what minimum proof does leadership need before scale?
+Daphne → Where will this approach fit or fail in the real WGU environment?
+Shaggy & Scooby → What part of this will real people actually understand, use, or ignore?
+
+WORKFLOW ORDER:
+1. Velma gathers evidence
+2. Daphne applies real-world context
+3. Shaggy & Scooby check for user clarity
+4. Fred assembles the final output
+
+FRED'S WATCH-OUT: The biggest risk is mistaking a broad aspiration for a testable operational move${revisionTail(profile)}.`;
+}
+
+function generateVelma(profile) {
+  return `KEY INSIGHTS:
+• The prompt points to ${profile.stakeholders.length} immediate stakeholder group(s): ${profile.audience}.
+• The fastest defensible validation path is a one-week pilot with 2 measures: participation and outcome quality.
+• No verified baseline is provided in the prompt, which means leadership risk comes from acting before it can compare before and after.
+
+SUPPORTING EVIDENCE:
+STAT: Demo baseline: 1 challenge statement, ${profile.stakeholders.length} stakeholder group(s), and 0 validated metrics supplied in the prompt.
+URL: ${DEMO_SOURCE_URL}
+Confidence: INFERRED
+Note: Local mode only counts evidence explicitly present in the user prompt.
+
+STAT: Minimum viable validation requires 2 measures in 1 week: participation and observable outcome.
+URL: ${DEMO_SOURCE_URL}
+Confidence: INFERRED
+Note: These are the two evidence checks built into the local measurement workflow.
+
+STAT: 3 proof points matter before scale: audience fit, workflow fit, and measurable impact.
+URL: ${DEMO_SOURCE_URL}
+Confidence: INFERRED
+Note: This is the minimum decision standard the dashboard uses for demo outputs.
+
+IMPORTANT CONSTRAINTS: This run uses a local demo engine. It does not fetch external research, so all evidence claims should be verified before executive use.
+
+UNANSWERED QUESTIONS: What is the current baseline? Which segment feels the problem most acutely? Who owns the work after the pilot week ends?`;
+}
+
+function generateDaphne(profile) {
+  return `REAL-WORLD IMPLICATIONS:
+• If ownership is diffuse, the idea will stall even if the concept is strong.
+• The fastest gains will come from simplifying one visible handoff, not from redesigning the whole ecosystem at once.
+• Leadership will trust this more if the test fits existing routines and reporting cadences.
+
+CONTEXTUAL RISKS:
+• Teams may treat this as extra work unless it clearly replaces an existing step.
+• If the pilot segment is chosen poorly, the result will be dismissed as unrepresentative.
+
+SITUATIONAL OPPORTUNITIES:
+• A short pilot makes it easier to get permission because the ask is small and time-boxed.
+• The challenge is already concrete enough to generate visible proof quickly if the owner is named upfront.
+
+SCENARIO: In a real WGU environment, this gains traction when one program lead and one frontline team agree to test a simpler workflow for a week. It hits friction when too many stakeholders try to improve the whole system at once instead of protecting a narrow pilot lane.
+
+RECOMMENDED ADJUSTMENTS: Narrow the pilot to one audience segment and one owner, then define the exact moment where clarity or decision quality should improve.`;
+}
+
+function generateShaggy(profile) {
+  return `WHAT WORKS:
+• A short pilot is something real people can understand.
+• Focusing on one clear owner makes the plan feel more believable.
+
+WHAT'S CONFUSING:
+• If the team says "improve the experience" without naming the exact step, people will not know what changed.
+• Too many success measures will make this feel like reporting homework.
+
+WHAT COULD BE SIMPLER:
+• Turn the goal into one sentence a student or staff member could repeat back immediately.
+• Keep the check-in to one quick question instead of a long survey.
+
+REALITY CHECK: Real people will try this if it obviously saves time or makes the next step easier. They will ignore it if it sounds like another abstract framework that adds work without solving a visible pain point.
+
+SHAGGY & SCOOBY'S VERDICT: LIKE TOTALLY WORKS - as long as the team keeps it concrete, short, and easy to explain.`;
+}
+
+function generateFredFinal(profile, userMessage) {
+  const idea = extractIdeaTitles(userMessage)[0] || "the simplified pilot";
+  return `FRED'S SUMMARY:
+The team converged on a narrow, testable move rather than a broad redesign. The clearest recommendation is to pilot ${idea} for one week, measure participation and clarity, and use that evidence to decide whether the approach deserves scale. The real advantage is not complexity; it is visible proof inside current constraints.
+
+KEY FINDINGS BY AGENT:
+Velma (Research): The main evidence gap is the missing baseline, which means the first job is to measure the current state before leadership overcommits.
+Daphne (Context): This will work best when one owner protects a small pilot lane and treats simplification as a replacement, not an add-on.
+Shaggy & Scooby (Users): The idea becomes usable when the workflow is concrete, the language is plain, and the test feels short enough to try.
+
+RECOMMENDATION:
+Run a one-week pilot of ${idea} with one audience segment, one owner, and two visible metrics.
+
+MILESTONES:
+1. Pilot Setup | Owner: ${profile.owner} | Deadline: 2 business days
+   Deliverable: Pilot brief with target segment, workflow change, and metric definitions
+   Success Metric: Stakeholders agree on a single owner and one tested workflow
+
+2. Live Pilot | Owner: Frontline team | Deadline: 1 week
+   Deliverable: Daily participation and clarity log
+   Success Metric: 12 completed uses and 80% positive clarity responses
+
+3. Decision Review | Owner: Leadership sponsor | Deadline: 2 days after pilot
+   Deliverable: One-page decision memo with keep, revise, or stop recommendation
+   Success Metric: Leadership chooses a next step based on evidence, not opinion
+
+RISKS TO FLAG:
+• Scope drift turns the pilot into a redesign project.
+• Weak baseline data makes improvement impossible to prove.
+
+NEXT STEP: ${profile.owner} drafts the pilot brief this week and launches the test in the next available operating cycle.`;
+}
+
+function generateTony(profile) {
+  return `Selected Perspective: Tony Stark
+
+Stark's Take:
+You're treating ${profile.focusArea} like it needs a committee when it really needs a working prototype. Build the smallest visible fix first${revisionTail(profile, "while accounting for")} and let the results embarrass the slow thinkers.
+
+What to Build Right Now:
+Create a one-screen or one-page version of the workflow that removes the messiest handoff and puts the next action in plain view.
+
+The Shortcut Nobody's Seeing:
+You do not need a better presentation; you need a tighter decision point. Shrink the problem to the one moment where people stall and instrument that moment.
+
+Rapid Test:
+Run it with one segment for 48 hours, count completions, and ask one question: "Was the next step obvious?"`;
+}
+
+function generateSteve(profile) {
+  return `Selected Perspective: Steve Rogers
+
+Rogers' Take:
+The right move is the one that helps ${profile.primaryStakeholder} most clearly, not the one that sounds most strategic in a meeting. If the team cannot explain who benefits and how, it is not ready yet.
+
+The Right Thing to Do:
+Choose the smallest change that makes the experience fairer, clearer, and easier to trust.
+
+Who This Actually Affects:
+This affects ${profile.audience}. The people most likely to get overlooked are the ones already carrying the most confusion or the least time.
+
+Leadership Move:
+Name one owner, protect the pilot from scope creep, and commit to learning from the result instead of defending the original plan.`;
+}
+
+function generateBruce(profile) {
+  return `Selected Perspective: Bruce Banner
+
+Banner's Take:
+We have a plausible hypothesis, not proof. Before we scale anything, we should make sure the signal we think we are seeing is actually tied to the workflow change and not to noise.
+
+What the Evidence Says:
+What we know is mostly structural: there is a challenge, there are affected stakeholders, and there is no verified baseline yet. The first scientific move is to define the current state, then test one change at a time.
+
+Variables to Watch:
+1. Whether the pilot segment is representative
+2. Whether staff have enough capacity to execute the change consistently
+3. Whether the chosen metric actually reflects the outcome leadership cares about
+
+The Assumption to Test First:
+The biggest assumption is that clarity is the primary constraint. If the real bottleneck is policy, timing, or staffing, the intervention will look weaker than it actually is.`;
+}
+
+function generateNatasha(profile) {
+  return `Selected Perspective: Natasha Romanoff
+
+Romanoff's Take:
+The surface problem is ${profile.focusArea}. The real problem is that nobody wants to own the moment where the experience gets messy.
+
+What's Really Going On:
+People are probably talking about strategy because strategy is safer than naming the handoff that is actually failing. Hidden constraint: this only moves if one person is accountable for the awkward middle.
+
+The Leverage Point:
+Find the smallest operational move that changes what a real person sees or hears next, then make that the pilot.
+
+Execution Reality:
+One sponsor clears space, one owner runs the test, and the frontline team uses the revised script or workflow for a week. Success looks like fewer stalls, faster decisions, and less ambiguity in the handoff.`;
+}
+
+function generateThor(profile) {
+  return `Selected Perspective: Thor
+
+Thor's Take:
+This is not merely a workflow issue; it is a moment of hesitation where confidence must be restored. If the path is cloudy, your people will not charge forward no matter how noble the goal.
+
+The Larger Story:
+At scale, this is about whether WGU can turn uncertainty into momentum without waiting for perfect conditions. Great systems are forged when teams learn to act boldly with evidence.
+
+The Legendary Move:
+Declare a short, visible pilot, strip the process to its essentials, and prove the better path in public.
+
+The Battle Cry:
+Make the next step so clear that hesitation has nowhere left to hide.`;
+}
+
+function generateDecisionMemo(profile, userMessage) {
+  const idea = extractIdeaTitles(userMessage)[0] || "Clear-Start Script";
+  return `DECISION MEMO
+
+Subject: ${profile.challengeLabel} - 7-Day Pilot Recommendation
+
+Context: ${profile.challenge}. The immediate need is to show whether a smaller, clearer workflow change can improve outcomes without adding cost or complexity.
+
+Recommendation: Pilot ${idea} with one audience segment, one owner, and two visible measures before scaling anything broader.
+
+Rationale: The strongest pattern across the stack is that the problem is too broad until it is narrowed to a single operational moment. A one-week test creates usable evidence faster than a large redesign and fits ${profile.constraints}.
+
+Micro-Test: Track participation and clarity for one week, review midweek, and decide whether the workflow should be kept, revised, or stopped.
+
+Risks: Scope creep will dilute the signal, and missing baseline data will make success hard to prove.
+
+Next Step: ${profile.owner} drafts the pilot brief in the next 2 business days and launches the test in the next available week.`;
+}
+
+function generatePerspectiveReport(profile) {
+  return `PERSPECTIVE REPORT
+
+Subject: ${profile.challengeLabel} Needs A Smaller First Move
+
+The Surprise: The most useful answer is not a bigger strategy. It is a narrower prototype that makes the next action obvious and measurable.
+
+Where They Agreed: Stark, Banner, and Romanoff all converge on the same core move: shrink the problem to one operational moment, assign ownership, and test it fast.
+
+Where They Disagreed: Rogers and Thor emphasize values and narrative, while Stark and Romanoff push speed and leverage. That tension reveals the real job: move quickly without losing trust or clarity.
+
+The Move: Launch one short pilot that changes the most painful handoff and instrument it immediately.
+
+The Frame: Treat this challenge as a proof problem first and a scale problem second.`;
+}
+
+function generateActionPlan(profile, userMessage) {
+  const idea = extractIdeaTitles(userMessage)[0] || "the simplified pilot";
+  return `ACTION PLAN
+
+Title: ${profile.challengeLabel} Pilot Plan
+Goal: Produce visible evidence that a smaller workflow change can improve ${profile.success}.
+
+Executive Summary: The clearest path is to test one narrow operational change before redesigning anything broader. The team should run a one-week pilot of ${idea}, measure participation and clarity, and use that evidence to decide whether to scale, revise, or stop. This keeps the work inside current constraints while giving leadership a concrete basis for the next decision.
+
+What the Team Found:
+• Velma (Research): The baseline is missing, so the first proof requirement is a clean before-and-after comparison.
+• Daphne (Context): The pilot will work only if one owner protects a small lane and treats the change as a replacement, not an add-on.
+• Shaggy & Scooby (Users): The experience must be plain-language, short, and easy to explain or real people will not adopt it.
+
+Recommendation: Run a one-week pilot of ${idea} with one owner, one segment, and two metrics.
+
+Milestones:
+1. Define Pilot | Owner: ${profile.owner} | Deadline: 2 business days
+   Deliverable: Pilot brief, target segment, success metrics
+   Success Metric: Stakeholders approve one owner and one testable workflow
+
+2. Launch And Track | Owner: Frontline team | Deadline: 1 week
+   Deliverable: Daily log of participation and clarity feedback
+   Success Metric: 12 completed uses and 80% positive clarity responses
+
+3. Decide Next Move | Owner: Leadership sponsor | Deadline: 2 days after pilot
+   Deliverable: Keep, revise, or stop memo
+   Success Metric: One evidence-based decision is made and assigned
+
+Risks:
+• Scope creep will make the signal noisy.
+• Weak owner accountability will make the pilot look less effective than it is.
+
+Next Step: ${profile.owner} writes the pilot brief and confirms the test audience this week.`;
+}
+
+function buildLocalResponse(systemPrompt, userMessage) {
+  const revisionRequest = extractRevisionRequest(userMessage);
+  const profile = buildProfile(extractChallenge(userMessage), revisionRequest);
+
+  if (systemPrompt.includes("Reframer Agent")) return generateReframer(profile);
+  if (systemPrompt.includes("Divergence Agent")) return generateDivergence(profile);
+  if (systemPrompt.includes("Contrarian Agent")) return generateContrarian(profile, userMessage);
+  if (systemPrompt.includes("Measurement Agent")) return generateMeasurement(profile, userMessage);
+  if (systemPrompt.includes("Translator Agent")) return generateTranslator(profile, userMessage);
+  if (systemPrompt.includes("Fred, the Project Manager and Organizer")) return generateFred(profile);
+  if (systemPrompt.includes("Velma, the Research and Analysis agent")) return generateVelma(profile);
+  if (systemPrompt.includes("Daphne, the Field Insight and Contextual Awareness agent")) return generateDaphne(profile);
+  if (systemPrompt.includes("Shaggy and Scooby, the User Perspective")) return generateShaggy(profile);
+  if (systemPrompt.includes("Fred, completing your role as Project Manager")) return generateFredFinal(profile, userMessage);
+  if (systemPrompt.includes("Tony Stark")) return generateTony(profile);
+  if (systemPrompt.includes("Steve Rogers")) return generateSteve(profile);
+  if (systemPrompt.includes("Bruce Banner")) return generateBruce(profile);
+  if (systemPrompt.includes("Natasha Romanoff")) return generateNatasha(profile);
+  if (systemPrompt.includes("Thor")) return generateThor(profile);
+  if (userMessage.includes("DECISION MEMO")) return generateDecisionMemo(profile, userMessage);
+  if (userMessage.includes("PERSPECTIVE REPORT")) return generatePerspectiveReport(profile, userMessage);
+  if (userMessage.includes("ACTION PLAN")) return generateActionPlan(profile, userMessage);
+
+  return `SUMMARY:
+Local demo mode generated a placeholder response for ${profile.challengeLabel}. Refine the challenge statement or update the built-in generator if you need a more specific format.`;
+}
+
+async function runLocalEngine(systemPrompt, userMessage, retries = 1) {
+  try {
+    await wait(220 + Math.floor(Math.random() * 240));
+    const text = buildLocalResponse(systemPrompt, userMessage);
+    if (!text) {
+      return { text: null, error: `Local engine produced no output after ${retries} attempt.` };
+    }
+    return { text, error: null };
+  } catch (error) {
+    return { text: null, error: `Local engine error: ${error.message}` };
   }
 }
 
@@ -846,9 +1422,6 @@ function AgentStackDemo() {
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [runningAgent, setRunningAgent] = useState(null);
   const [input, setInput] = useState("");
-  const [apiKey, setApiKey] = useState(loadStoredApiKey);
-  const [rememberApiKey, setRememberApiKey] = useState(() => Boolean(loadStoredApiKey()));
-  const [showApiKey, setShowApiKey] = useState(false);
   const [running, setRunning] = useState(false);
   const [results, setResults] = useState({ "creativity-stack": {}, "avengers-stack": {}, "scooby-stack": {} });
   const [statuses, setStatuses] = useState({ "creativity-stack": {}, "avengers-stack": {}, "scooby-stack": {} });
@@ -861,28 +1434,15 @@ function AgentStackDemo() {
     if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
   }, [log]);
 
-  useEffect(() => {
-    try {
-      if (rememberApiKey && apiKey.trim()) {
-        window.localStorage.setItem(ANTHROPIC_API_KEY_STORAGE, apiKey.trim());
-      } else {
-        window.localStorage.removeItem(ANTHROPIC_API_KEY_STORAGE);
-      }
-    } catch {
-      // Ignore storage failures in locked-down browsers.
-    }
-  }, [apiKey, rememberApiKey]);
-
   const addLog = (msg, color = "#111827") =>
     setLog(p => [...p, { msg, color, ts: new Date().toLocaleTimeString() }]);
 
   const stack = STACKS[activeStack];
   const hasResults = Object.values(results[activeStack]).length > 0 || finalOutputs[activeStack];
-  const hasApiKey = Boolean(apiKey.trim());
-  const canRun = Boolean(input.trim()) && hasApiKey && !running;
+  const canRun = Boolean(input.trim()) && !running;
 
   async function runFullStack() {
-    if (!input.trim() || !hasApiKey) return;
+    if (!input.trim()) return;
     setRunning(true);
     const sid = activeStack;
     const st = STACKS[sid];
@@ -890,7 +1450,7 @@ function AgentStackDemo() {
     setStatuses(p => ({ ...p, [sid]: {} }));
     setFinalOutputs(p => ({ ...p, [sid]: null }));
     setLog([]);
-    addLog(`${st.label} initiated`, st.color);
+    addLog(`${st.label} initiated in ${LOCAL_ENGINE_NAME}`, st.color);
 
     const agentTexts = {};
     for (const agent of st.agents) {
@@ -908,7 +1468,7 @@ function AgentStackDemo() {
         ? `Challenge/Goal: ${input}\n\nPrevious agent outputs:\n${priorContext}`
         : `Challenge/Goal: ${input}`;
 
-      const res = await callClaude(agent.systemPrompt, userMsg, apiKey);
+      const res = await runLocalEngine(agent.systemPrompt, userMsg);
       if (!res.error) agentTexts[agent.id] = res.text;
 
       setResults(p => ({ ...p, [sid]: { ...p[sid], [agent.id]: res } }));
@@ -922,10 +1482,9 @@ function AgentStackDemo() {
       .map(a => `[${a.name}]\n${agentTexts[a.id] || "(no output)"}`)
       .join("\n\n---\n\n");
 
-    const finalRes = await callClaude(
+    const finalRes = await runLocalEngine(
       "You are a synthesis agent for Dr. A.J. Merlino's Creative Impact Programs at WGU. Write in clear, direct prose for executive leadership and accreditors.",
-      st.buildFinalPrompt(input, outputsText),
-      apiKey
+      st.buildFinalPrompt(input, outputsText)
     );
 
     setFinalOutputs(p => ({ ...p, [sid]: finalRes }));
@@ -936,7 +1495,7 @@ function AgentStackDemo() {
   }
 
   async function runSingleAgent(stackId, agentId) {
-    if (!input.trim() || !hasApiKey) return;
+    if (!input.trim()) return;
     const agent = STACKS[stackId].agents.find(a => a.id === agentId);
     if (!agent) return;
     setRunning(true);
@@ -944,7 +1503,7 @@ function AgentStackDemo() {
     setStatuses(p => ({ ...p, [stackId]: { ...p[stackId], [agentId]: "active" } }));
     addLog(`Invoking ${agent.name}...`, agent.color);
 
-    const res = await callClaude(agent.systemPrompt, `Challenge/Goal: ${input}`, apiKey);
+    const res = await runLocalEngine(agent.systemPrompt, `Challenge/Goal: ${input}`);
     setResults(p => ({ ...p, [stackId]: { ...p[stackId], [agentId]: res } }));
     setStatuses(p => ({ ...p, [stackId]: { ...p[stackId], [agentId]: res.error ? "error" : "done" } }));
     setExpanded(`${stackId}-${agentId}`);
@@ -967,7 +1526,7 @@ function AgentStackDemo() {
   }
 
   async function runRevision() {
-    if (!reviseInput.trim() || !reviseTarget || revising || !hasApiKey) return;
+    if (!reviseInput.trim() || !reviseTarget || revising) return;
     setRevising(true);
     const sid = activeStack;
     const st = STACKS[sid];
@@ -990,7 +1549,7 @@ function AgentStackDemo() {
       const sysPrompt = agent.systemPrompt + "\n\nYou are in REVISION MODE. The user has reviewed your output and has specific feedback. Produce a revised version of your full output incorporating their request. Maintain your original format and quality gates.";
       const userMsg = `Original challenge: ${input}\n\nAll agent context so far:\n${allAgentContext}\n\nYour previous output:\n${currentOutput}\n\nRevision request: ${reviseInput.trim()}`;
 
-      const res = await callClaude(sysPrompt, userMsg, apiKey);
+      const res = await runLocalEngine(sysPrompt, userMsg);
 
       // Track revision history
       setRevisions(prev => ({
@@ -1010,7 +1569,7 @@ function AgentStackDemo() {
       const sysPrompt = "You are a synthesis agent for Dr. A.J. Merlino's Creative Impact Programs at WGU. You are in REVISION MODE. The user has reviewed the " + st.outputType + " and has specific feedback. Produce a fully revised version incorporating their request. Maintain the same format and executive-level quality.";
       const userMsg = `Original challenge: ${input}\n\nAgent outputs:\n${allAgentContext}\n\nCurrent ${st.outputType}:\n${currentFinal}\n\nRevision request: ${reviseInput.trim()}`;
 
-      const res = await callClaude(sysPrompt, userMsg, apiKey);
+      const res = await runLocalEngine(sysPrompt, userMsg);
 
       setFinalRevisions(prev => ({
         ...prev,
@@ -1214,7 +1773,6 @@ function AgentStackDemo() {
         textarea:focus, input:focus, button:focus, select:focus { outline: none; }
         textarea, input, select { font-family: inherit; }
         textarea { resize: none; }
-        .settings-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: center; }
         @media (max-width: 960px) {
           .app-shell { grid-template-columns: 1fr !important; }
           .sidebar {
@@ -1226,7 +1784,6 @@ function AgentStackDemo() {
             border-bottom: 1px solid #E2E8F0;
           }
           .main-pane { max-height: none !important; padding: 18px !important; }
-          .settings-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
 
@@ -1336,74 +1893,25 @@ function AgentStackDemo() {
 
           <div style={{ marginBottom: 16 }}>
             <div style={{ fontSize: 15, fontFamily: "monospace", color: "#111827", letterSpacing: 1, marginBottom: 5 }}>
-              ANTHROPIC API
+              ENGINE
             </div>
             <div style={{
               background: "#FFFFFF",
-              border: `1px solid ${hasApiKey ? "#BBF7D0" : "#FECACA"}`,
+              border: "1px solid #BBF7D0",
               borderRadius: 5,
               padding: "12px"
             }}>
-              <div className="settings-grid">
-                <input
-                  type={showApiKey ? "text" : "password"}
-                  value={apiKey}
-                  onChange={e => setApiKey(e.target.value)}
-                  placeholder="Enter your Anthropic API key"
-                  style={{
-                    width: "100%",
-                    padding: "10px 12px",
-                    background: "#FFFFFF",
-                    border: "1px solid #CBD5E1",
-                    borderRadius: 4,
-                    color: "#111827",
-                    fontSize: 15,
-                    fontFamily: "monospace"
-                  }}
-                />
-                <button
-                  onClick={() => setShowApiKey(p => !p)}
-                  style={{
-                    padding: "8px 12px",
-                    background: "transparent",
-                    border: "1px solid #CBD5E1",
-                    borderRadius: 4,
-                    color: "#1E293B",
-                    fontSize: 14,
-                    fontFamily: "monospace",
-                    cursor: "pointer"
-                  }}
-                >
-                  {showApiKey ? "HIDE" : "SHOW"}
-                </button>
-                <label style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 7,
-                  fontSize: 14,
-                  fontFamily: "monospace",
-                  color: "#334155"
-                }}>
-                  <input
-                    type="checkbox"
-                    checked={rememberApiKey}
-                    onChange={e => setRememberApiKey(e.target.checked)}
-                  />
-                  Remember
-                </label>
-              </div>
               <div style={{
-                fontSize: 14,
+                fontSize: 15,
                 fontFamily: "monospace",
-                color: hasApiKey ? "#166534" : "#991B1B",
-                marginTop: 9
+                color: "#166534",
+                fontWeight: 700,
+                letterSpacing: 1
               }}>
-                {hasApiKey
-                  ? `READY · browser requests will use ${ANTHROPIC_MODEL}`
-                  : "KEY REQUIRED · add an Anthropic API key before running a stack"}
+                LOCAL DEMO MODE · NO API KEY REQUIRED
               </div>
               <div style={{ fontSize: 13, color: "#475569", lineHeight: 1.5, marginTop: 6 }}>
-                This repo runs as a static app, so requests go directly from the browser. Use a limited internal key if you publish it.
+                Outputs are generated locally from built-in templates and your prompt. Use this mode for demos, structure reviews, and storyboard iterations rather than verified research.
               </div>
             </div>
           </div>
@@ -1635,13 +2143,13 @@ function AgentStackDemo() {
                 <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
                   <button
                     onClick={runRevision}
-                    disabled={revising || !reviseInput.trim() || !hasApiKey}
+                    disabled={revising || !reviseInput.trim()}
                     style={{
-                      padding: "8px 14px", background: revising || !reviseInput.trim() || !hasApiKey ? "#181818" : "#BE8EE8",
+                      padding: "8px 14px", background: revising || !reviseInput.trim() ? "#181818" : "#BE8EE8",
                       border: "none", borderRadius: 4,
-                      color: revising || !reviseInput.trim() || !hasApiKey ? "#111827" : "#F8F9FB",
+                      color: revising || !reviseInput.trim() ? "#111827" : "#F8F9FB",
                       fontSize: 15, fontFamily: "monospace", letterSpacing: 1, fontWeight: 700,
-                      cursor: revising || !reviseInput.trim() || !hasApiKey ? "not-allowed" : "pointer",
+                      cursor: revising || !reviseInput.trim() ? "not-allowed" : "pointer",
                       whiteSpace: "nowrap"
                     }}>
                     {revising ? "REVISING..." : "↺ APPLY"}

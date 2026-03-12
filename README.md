@@ -1,6 +1,6 @@
 # Agent FCC Demo
 
-This repo now contains a static version of the attached dashboard so it can run without a Node build step.
+This repo contains a static version of the attached dashboard that runs without a Node build step and without an Anthropic API key.
 
 ## What is included
 
@@ -23,19 +23,25 @@ You can also publish the repo with GitHub Pages because the app is static.
 ## Using the dashboard
 
 1. Open the page.
-2. Paste an Anthropic API key into the `ANTHROPIC API` field.
-3. Enter your challenge.
-4. Run a full stack or a single agent.
+2. Enter your challenge.
+3. Run a full stack or a single agent.
+4. Use revision mode if you want to steer the output after the first pass.
 
-## Important note about API keys
+## Local mode behavior
 
-This version runs directly from the browser, so Anthropic requests are client-side. That makes the app easy to host as a static site, but it also means the browser handles the API key. Use a limited internal key if you publish the site.
+This version uses a built-in local demo engine instead of calling Anthropic. That means:
+
+- no API key is required
+- no model backend is required
+- the app still works on GitHub Pages or any simple static host
+
+The tradeoff is that outputs are generated from local templates and heuristics. They are useful for demos, workflow design, and structure reviews, but they are not verified research.
 
 ## Why this version differs from the attached JSX
 
-The original JSX assumed a React build environment and its Anthropic request was missing the required auth headers. This repo version:
+The original JSX assumed a React build environment and a live Anthropic integration. This repo version:
 
 - runs from a plain static `index.html`
-- adds the required `x-api-key` and `anthropic-version` headers
-- adds an in-app API key field with optional browser storage
+- replaces the external model call with a built-in local generator
+- removes the API key requirement entirely
 - keeps the dashboard layout, revisions flow, and `.docx` export

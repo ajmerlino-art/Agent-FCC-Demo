@@ -35,7 +35,7 @@ This version uses a built-in local demo engine with an embedded knowledge base i
 - no model backend is required
 - the app still works on GitHub Pages or any simple static host
 
-The tradeoff is that outputs are generated from local domain heuristics rather than verified external research. They are more knowledgeable than the earlier placeholder version and are useful for demos, workflow design, and structure reviews, but they are still not verified research.
+The tradeoff is that outputs are generated from a local reasoning engine and embedded domain heuristics rather than verified external research. This version now does more than fill templates: it infers bottlenecks, failure points, tradeoffs, assumptions, evidence gaps, and pilot hypotheses before each agent responds. It is stronger for demos, workflow design, and structured decision reviews, but it is still not verified research.
 
 ## Why this version differs from the attached JSX
 

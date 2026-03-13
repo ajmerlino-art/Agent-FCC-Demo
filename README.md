@@ -29,13 +29,13 @@ You can also publish the repo with GitHub Pages because the app is static.
 
 ## Local mode behavior
 
-This version uses a built-in local demo engine instead of calling Anthropic. That means:
+This version uses a built-in local demo engine with an embedded knowledge base instead of calling Anthropic. That means:
 
 - no API key is required
 - no model backend is required
 - the app still works on GitHub Pages or any simple static host
 
-The tradeoff is that outputs are generated from local templates and heuristics. They are useful for demos, workflow design, and structure reviews, but they are not verified research.
+The tradeoff is that outputs are generated from local domain heuristics rather than verified external research. They are more knowledgeable than the earlier placeholder version and are useful for demos, workflow design, and structure reviews, but they are still not verified research.
 
 ## Why this version differs from the attached JSX
 

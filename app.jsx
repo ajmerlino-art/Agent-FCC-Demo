@@ -494,6 +494,201 @@ const STOPWORDS = new Set([
   "where", "which", "while", "with", "within", "would", "your"
 ]);
 
+const KNOWLEDGE_BANK = {
+  student_success: {
+    leveragePoints: [
+      "The highest-leverage move is usually the first ambiguous next step, not the entire journey.",
+      "Students interpret silence as risk, so fast reassurance often beats more information.",
+      "Designing for the hardest handoff reveals what the standard path is hiding."
+    ],
+    risks: [
+      "Average-case design masks learners managing work, family, transfer, or re-entry complexity.",
+      "If the change adds work to mentors or advisors, adoption will fall quickly.",
+      "A better script still fails when the escalation path behind it is unclear."
+    ],
+    metrics: [
+      "next-step completion",
+      "time-to-next-action",
+      "clarity or confidence after the touchpoint"
+    ],
+    userLens: [
+      "People act when the next move feels obvious and low-risk.",
+      "Trust grows when the system signals progress quickly.",
+      "Plain-language guidance beats hidden policy detail."
+    ],
+    executiveQuestions: [
+      "Which moment creates avoidable drop-off right now?",
+      "What proof would show the handoff is actually clearer in one cycle?",
+      "Which segment carries the most invisible friction?"
+    ],
+    employerSignals: [
+      "service design under real constraints",
+      "evidence-driven improvement",
+      "cross-functional execution"
+    ]
+  },
+  learning_design: {
+    leveragePoints: [
+      "Faculty adoption improves when a change reduces prep, grading, or ambiguity rather than adding process.",
+      "The right level of detail is the minimum needed to change behavior consistently.",
+      "Exceptions are where instructional design quality is exposed."
+    ],
+    risks: [
+      "A pedagogically elegant solution can fail if it ignores faculty workload.",
+      "Content fixes often compensate for a sequencing or assessment problem.",
+      "Standardization without rationale gets treated as compliance theater."
+    ],
+    metrics: [
+      "faculty adoption rate",
+      "time saved in the workflow",
+      "quality or consistency of learner outputs"
+    ],
+    userLens: [
+      "Faculty keep what is teachable, reusable, and easy to explain.",
+      "Students notice sequence and feedback before they notice strategy language.",
+      "A smaller rubric shift can outperform a full redesign if the signal is clearer."
+    ],
+    executiveQuestions: [
+      "Does this reduce cognitive load for faculty and students at the same time?",
+      "Where is the current design asking people to infer too much?",
+      "What single step would make quality more consistent next term?"
+    ],
+    employerSignals: [
+      "learning systems design",
+      "operationalization of quality standards",
+      "measurable process improvement"
+    ]
+  },
+  employability: {
+    leveragePoints: [
+      "Employer-readable evidence is clearer when it names behavior, outcome, and context together.",
+      "Translation matters most at the point where academic work must become market signal.",
+      "Small measurable wins are easier to trust than broad skill claims."
+    ],
+    risks: [
+      "Skill language becomes generic when it is not anchored to a real artifact or result.",
+      "Labor-market framing can overwhelm academic purpose if it is bolted on at the end.",
+      "A strong experience still gets discounted if nobody can explain it in hiring language."
+    ],
+    metrics: [
+      "artifact completion",
+      "quality of evidence statements",
+      "alignment to job-posting language"
+    ],
+    userLens: [
+      "People need examples of how to describe their work, not just encouragement to do it.",
+      "Translation should preserve honesty while increasing legibility.",
+      "A measurable outcome makes the skill claim far more credible."
+    ],
+    executiveQuestions: [
+      "How will this show up in a portfolio, resume bullet, or interview story?",
+      "What market-facing phrase does this actually support?",
+      "Which result makes the learning visible to an outsider?"
+    ],
+    employerSignals: [
+      "structured problem-solving",
+      "continuous improvement",
+      "communication tied to measurable outcomes"
+    ]
+  },
+  leadership_change: {
+    leveragePoints: [
+      "Leaders move faster when scope is bounded, owner is named, and downside is contained.",
+      "Decision quality improves when the team defines the keep, revise, or stop threshold in advance.",
+      "A small proof point beats a large abstract recommendation."
+    ],
+    risks: [
+      "Strategic language can hide the lack of an operating owner.",
+      "A good idea loses credibility when the pilot lane is too broad.",
+      "Reporting overhead can destroy the speed needed for experimentation."
+    ],
+    metrics: [
+      "decision turnaround time",
+      "pilot completion rate",
+      "leadership confidence in next-step clarity"
+    ],
+    userLens: [
+      "Executives want a recommendation, a reason, and a bounded risk story.",
+      "Sponsors support pilots that look reversible and evidence-seeking.",
+      "Momentum comes from visible progress, not presentation volume."
+    ],
+    executiveQuestions: [
+      "What would make this safe enough to test now?",
+      "Who owns the work between the meeting and the result?",
+      "What threshold would justify scaling or stopping?"
+    ],
+    employerSignals: [
+      "decision framing",
+      "change leadership",
+      "risk-managed experimentation"
+    ]
+  },
+  workflow_ops: {
+    leveragePoints: [
+      "Friction usually lives at boundaries between roles, systems, or decision rights.",
+      "Exceptions reveal the true design of a workflow faster than average cases do.",
+      "Queue visibility and escalation rules are often more important than more documentation."
+    ],
+    risks: [
+      "A cleaner handoff can still fail if upstream incentives remain unchanged.",
+      "Teams over-diagnose communication when the real problem is sequencing or ownership.",
+      "Hidden parallel work makes the visible workflow look simpler than it really is."
+    ],
+    metrics: [
+      "handoff completion",
+      "cycle time",
+      "rework or escalation rate"
+    ],
+    userLens: [
+      "People adopt workflows that remove ambiguity from their next action.",
+      "A visible rule is more reliable than an implied expectation.",
+      "Short feedback loops improve consistency faster than additional policy."
+    ],
+    executiveQuestions: [
+      "Where does the work stall today?",
+      "Which exception type should shape the design first?",
+      "What is the smallest boundary change that would reduce rework?"
+    ],
+    employerSignals: [
+      "process design",
+      "cross-functional coordination",
+      "operational troubleshooting"
+    ]
+  },
+  measurement: {
+    leveragePoints: [
+      "A credible pilot needs one behavior metric and one outcome metric.",
+      "A baseline is part of the intervention design, not an afterthought.",
+      "Decision thresholds should be defined before the pilot begins."
+    ],
+    risks: [
+      "Teams often measure activity and call it impact.",
+      "If the target segment is too mixed, the signal will blur.",
+      "A weak check-in cadence makes learning lag behind execution."
+    ],
+    metrics: [
+      "participation",
+      "outcome quality",
+      "time to insight"
+    ],
+    userLens: [
+      "People trust measures they can collect without extra tooling.",
+      "Two metrics sustained well beat six metrics collected badly.",
+      "The best pilot evidence is timely enough to change the next week of work."
+    ],
+    executiveQuestions: [
+      "What baseline will make improvement defensible?",
+      "What result would count as enough evidence to continue?",
+      "How quickly will the team review and adjust?"
+    ],
+    employerSignals: [
+      "experimental design",
+      "evidence-based iteration",
+      "metrics literacy"
+    ]
+  }
+};
+
 function wait(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -645,12 +840,79 @@ function detectJobPhrase(lower) {
   return "turn ambiguous stakeholder needs into measurable process improvements";
 }
 
+function detectDomains(lower) {
+  const domains = [];
+
+  if (/student|retention|persist|advisor|mentor|enroll|admission/.test(lower)) domains.push("student_success");
+  if (/faculty|course|curriculum|assessment|instruction|rubric/.test(lower)) domains.push("learning_design");
+  if (/career|employ|industry|workforce|job|portfolio|resume|skill/.test(lower)) domains.push("employability");
+  if (/leader|leadership|executive|sponsor|decision|strategy/.test(lower)) domains.push("leadership_change");
+  if (/workflow|process|handoff|queue|operation|system|intake/.test(lower)) domains.push("workflow_ops");
+  if (/metric|measure|baseline|evidence|pilot|test|data/.test(lower)) domains.push("measurement");
+
+  if (!domains.length) {
+    domains.push("workflow_ops", "measurement", "leadership_change");
+  }
+
+  return [...new Set(domains)];
+}
+
+function collectKnowledge(domains, field, limit = 3) {
+  const values = [];
+
+  for (const domain of domains) {
+    for (const entry of KNOWLEDGE_BANK[domain]?.[field] || []) {
+      if (!values.includes(entry)) values.push(entry);
+    }
+  }
+
+  return values.slice(0, limit);
+}
+
+function selectMetricBlueprint(domains, primaryStakeholder) {
+  if (domains.includes("student_success")) {
+    return {
+      participationLabel: `Number of ${primaryStakeholder} who complete the clarified next step`,
+      participationTarget: 15,
+      outcomeLabel: "Share who report the path felt clear and low-risk",
+      outcomeTarget: "85% positive responses"
+    };
+  }
+
+  if (domains.includes("learning_design")) {
+    return {
+      participationLabel: "Number of faculty using the revised asset or workflow consistently",
+      participationTarget: 8,
+      outcomeLabel: "Share of learner outputs that meet the new quality signal",
+      outcomeTarget: "75% of sampled outputs"
+    };
+  }
+
+  if (domains.includes("employability")) {
+    return {
+      participationLabel: `Number of ${primaryStakeholder} who produce a usable skill-evidence statement`,
+      participationTarget: 12,
+      outcomeLabel: "Share of statements that align to a real hiring phrase and include a measurable result",
+      outcomeTarget: "80% of reviewed statements"
+    };
+  }
+
+  return {
+    participationLabel: `Number of ${primaryStakeholder} who complete the revised workflow step`,
+    participationTarget: 12,
+    outcomeLabel: "Share of participants who say the next move felt obvious and actionable",
+    outcomeTarget: "80% positive responses"
+  };
+}
+
 function buildProfile(challenge, revisionRequest = "") {
   const normalized = normalizeText(challenge);
   const lower = normalized.toLowerCase();
   const firstSentence = normalized.split(/(?<=[.!?])\s+/)[0] || normalized;
   const keywords = extractKeywords(normalized);
   const stakeholders = detectStakeholders(lower);
+  const domains = detectDomains(lower);
+  const metricBlueprint = selectMetricBlueprint(domains, stakeholders[0] || "stakeholders");
   const challengeLabel = toTitleCase(clipWords(firstSentence.replace(/[^a-zA-Z0-9\s-]/g, ""), 6)) || "Agent Stack Opportunity";
 
   return {
@@ -662,6 +924,7 @@ function buildProfile(challenge, revisionRequest = "") {
     focusArea: clipWords(firstSentence, 10) || "the current challenge",
     focusPair: keywords.slice(0, 2).join(" and ") || "the current workflow",
     stakeholders,
+    domains,
     audience: joinWithAnd(stakeholders),
     primaryStakeholder: stakeholders[0] || "stakeholders",
     owner: detectOwner(lower),
@@ -670,6 +933,13 @@ function buildProfile(challenge, revisionRequest = "") {
     success: detectSuccess(lower, keywords),
     roleType: detectRoleType(lower),
     jobPhrase: detectJobPhrase(lower),
+    leveragePoints: collectKnowledge(domains, "leveragePoints", 3),
+    risks: collectKnowledge(domains, "risks", 3),
+    metrics: collectKnowledge(domains, "metrics", 3),
+    userLens: collectKnowledge(domains, "userLens", 3),
+    executiveQuestions: collectKnowledge(domains, "executiveQuestions", 3),
+    employerSignals: collectKnowledge(domains, "employerSignals", 3),
+    metricBlueprint,
     revisionRequest,
     revisionFocus: revisionRequest ? clipWords(revisionRequest, 12) : ""
   };
@@ -710,16 +980,16 @@ function extractTestedIdea(text) {
 
 function generateReframer(profile) {
   return `FRAMING 1: Experience Design Gap
-Instead of treating ${profile.focusArea} as a broad strategy problem, frame it as the first critical moment where ${profile.primaryStakeholder} lose clarity or momentum${revisionTail(profile)}.
-Why this matters: It opens low-cost fixes to sequencing, language, and support before leadership invests in a larger redesign.
+Instead of treating ${profile.focusArea} as a broad strategy problem, frame it as the first critical moment where ${profile.primaryStakeholder} lose clarity or momentum${revisionTail(profile)}. Ask what would make the next move feel obvious, low-risk, and worth doing now.
+Why this matters: ${profile.leveragePoints[0]} It pushes the team toward small design changes that can alter behavior quickly.
 
-FRAMING 2: Capacity Allocation Gap
-Treat ${profile.focusArea} as a staffing and attention-shaping problem: where should limited time move first so the highest-friction step gets handled well?
-Why this matters: It creates options around workload, ownership, and escalation rather than assuming the answer is a new initiative.
+FRAMING 2: Decision Rights Gap
+Treat ${profile.focusArea} as a governance problem: where is the team expecting people to infer ownership, sequence, or escalation instead of making it explicit? Ask which boundary between roles is producing rework, delay, or handoff ambiguity.
+Why this matters: It surfaces whether the real blocker is messaging, sequence, or decision rights, which is usually more actionable than a generic call for alignment.
 
 FRAMING 3: Evidence Signal Gap
-Frame ${profile.focusArea} as a proof problem: what would leadership need to see in one short cycle to believe this is improving?
-Why this matters: It opens a micro-test path, which is faster and more defensible than arguing abstractly about value.`;
+Frame ${profile.focusArea} as a proof problem: what would leadership need to see in one short cycle to believe this is improving, and what threshold would justify a keep, revise, or stop decision?
+Why this matters: ${profile.leveragePoints[2] || "It opens a micro-test path, which is faster and more defensible than arguing abstractly about value."} It shifts the conversation from aspiration to evidence.`;
 }
 
 function generateDivergence(profile) {
@@ -727,48 +997,48 @@ function generateDivergence(profile) {
   const ideas = [
     {
       title: "Clear-Start Script",
-      description: `Write a one-page script for the first high-friction moment in ${profile.focusArea}. It gives ${profile.audience} the same opening language and makes inconsistency visible within a week.`
+      description: `Write a one-page script for the first high-friction moment in ${profile.focusArea}. It gives ${profile.audience} the same opening language, names the next action, and reduces the risk that people interpret silence or ambiguity as a dead end.`
     },
     {
       title: "Seven-Day Signal Board",
-      description: `Create a lightweight tracker with only two measures: participation and visible outcome. That keeps the team focused on whether ${profile.success} is actually moving instead of debating anecdotes.`
+      description: `Create a lightweight tracker with only two measures: ${profile.metricBlueprint.participationLabel.toLowerCase()} and ${profile.metricBlueprint.outcomeLabel.toLowerCase()}. That keeps the team focused on whether ${profile.success} is moving instead of debating anecdotes or vanity activity.`
     },
     {
       title: "Edge-Case Review",
-      description: `Review the five hardest recent cases related to ${profile.focusPair}. The point is to design for the breakdowns first so the standard experience becomes easier for everyone else.`
+      description: `Review the five hardest recent cases related to ${profile.focusPair}. Design for the breakdowns first so the standard path gets easier, and use the exceptions to reveal where policy, sequence, or ownership is actually failing.`
     },
     {
       title: analogies[0].title,
       analogy: analogies[0].field,
-      description: `Borrow from ${analogies[0].field}: ${analogies[0].lesson}. Run a dry rehearsal of the workflow with the people who actually own the handoff and revise the script immediately afterward.`
+      description: `Borrow from ${analogies[0].field}: ${analogies[0].lesson}. Run a dry rehearsal of the workflow with the people who own the handoff, capture every hesitation point, and revise the script before the next live cycle.`
     },
     {
       title: analogies[1].title,
       analogy: analogies[1].field,
-      description: `Borrow from ${analogies[1].field}: ${analogies[1].lesson}. Add three small signals that nudge the desired action before the workflow stalls.`
+      description: `Borrow from ${analogies[1].field}: ${analogies[1].lesson}. Add three small signals that nudge the desired action before the workflow stalls, especially where users currently need to infer what happens next.`
     },
     {
       title: analogies[2].title,
       analogy: analogies[2].field,
-      description: `Borrow from ${analogies[2].field}: ${analogies[2].lesson}. Strip the process down to the minimum visible steps and remove anything that does not help ${profile.primaryStakeholder} decide or act.`
+      description: `Borrow from ${analogies[2].field}: ${analogies[2].lesson}. Strip the process down to the minimum visible steps and remove anything that does not help ${profile.primaryStakeholder} decide, trust, or act.`
     },
     {
       title: analogies[3].title,
       analogy: analogies[3].field,
-      description: `Borrow from ${analogies[3].field}: ${analogies[3].lesson}. Define an early-warning rule so the team can intervene before confusion compounds.`
+      description: `Borrow from ${analogies[3].field}: ${analogies[3].lesson}. Define an early-warning rule so the team can intervene before confusion compounds and rework spreads downstream.`
     },
     {
       title: analogies[4].title,
       analogy: analogies[4].field,
-      description: `Borrow from ${analogies[4].field}: ${analogies[4].lesson}. Give frontline staff one non-negotiable structure and one place where they can adapt in real time.`
+      description: `Borrow from ${analogies[4].field}: ${analogies[4].lesson}. Give frontline staff one non-negotiable structure and one bounded space to adapt in real time so the workflow stays consistent without becoming brittle.`
     },
     {
-      title: "Peer Proof Gallery",
-      description: `Capture three concrete examples of the desired behavior or outcome and display them where the team works. That turns the abstract goal into something staff and leaders can quickly compare against.`
+      title: "Segment-Specific Proof Pack",
+      description: `Capture three examples from the highest-friction segment and show how the revised move changed the outcome. That turns the abstract goal into concrete proof that leadership can inspect and staff can imitate.`
     },
     {
       title: "Rule-of-Three Executive Review",
-      description: `End each week with a three-line review: what changed, what stayed stuck, and what should be tested next. It keeps leadership involved without creating reporting overhead.`
+      description: `End each week with a three-line review: what changed, what stayed stuck, and what deserves a keep, revise, or stop call. It keeps leadership involved without creating reporting overhead and reinforces evidence discipline.`
     }
   ];
 
@@ -785,11 +1055,11 @@ function generateContrarian(profile, userMessage) {
   const verdicts = ["KEEP", "REVISE", "KEEP"];
 
   return selected.map((idea, index) => `IDEA: ${idea}
-Academic Risk: If ownership is vague, the team may interpret this as another pilot layered on top of current work instead of a cleaner way to do existing work.
-Industry Risk: If the output never leaves the WGU context, employers or external partners may not see why the change matters beyond internal process hygiene.
-Bias: This idea assumes the main blockage is clarity. If the real issue is capacity or policy, clarity alone will not move the result.
-Genericity: The move is only novel if the team actually simplifies the workflow and measures the change; otherwise it collapses into another meeting artifact.
-Verdict: ${verdicts[index] || "REVISE"} - ${index === 1 ? "Keep the core idea, but tighten the owner and metric before using it." : "This is worth testing because it is fast, visible, and compatible with current constraints."}`).join("\n\n");
+Academic Risk: ${profile.risks[0]} If ownership is vague, the team may interpret this as another layer on top of current work instead of a cleaner operating move.
+Industry Risk: If the output never becomes an employer-readable result or a visible operational gain, external partners will treat it as internal process hygiene rather than capability building.
+Bias: This idea assumes the main blockage is clarity. If ${profile.executiveQuestions[0].toLowerCase()} points to staffing, policy, or incentive misalignment instead, the pilot will underperform.
+Genericity: The move becomes generic if it stops at language change and never touches sequence, decision rights, or measurable proof.
+Verdict: ${verdicts[index] || "REVISE"} - ${index === 1 ? "Keep the core move, but tighten the target segment, owner, and threshold before using it." : "This is worth testing because it changes behavior in a visible place and can generate proof inside current constraints."}`).join("\n\n");
 }
 
 function generateMeasurement(profile, userMessage) {
@@ -802,15 +1072,15 @@ function generateMeasurement(profile, userMessage) {
 Owner: ${profile.owner}
 Test Window: ${formatDate(start)} to ${formatDate(end)}
 
-Participation Metric: Number of ${profile.primaryStakeholder} who complete the new workflow step
-Baseline: No structured count captured today → Target: 12 completions during the week
+Participation Metric: ${profile.metricBlueprint.participationLabel}
+Baseline: No structured count captured today → Target: ${profile.metricBlueprint.participationTarget} successful uses during the week
 
-Outcome Metric: Share of participants who report the step felt clearer and easier to act on
-Baseline: No clarity score captured today → Target: 80% positive responses
+Outcome Metric: ${profile.metricBlueprint.outcomeLabel}
+Baseline: No structured outcome check captured today → Target: ${profile.metricBlueprint.outcomeTarget}
 
-Protocol: Launch the revised workflow with one team and one defined audience segment. Capture participation daily, ask one clarity question at the end of the interaction, and review the results at the midpoint and the end of the week.
+Protocol: Launch the revised workflow with one team and one defined audience segment. Capture participation daily, collect one lightweight outcome check tied to the actual decision or behavior change, and review the data at midweek so the team can revise while the pilot is still live.
 
-Success Criteria: Continue if the team hits at least 12 completions, 80% positive clarity, and one operational lesson that can be reused in the next cycle.`;
+Success Criteria: Continue if the team hits the participation target, reaches the outcome threshold, and learns one reusable lesson about sequence, ownership, or user confidence that can shape the next cycle.`;
 }
 
 function generateTranslator(profile, userMessage) {
@@ -819,22 +1089,22 @@ function generateTranslator(profile, userMessage) {
 Job Posting Phrase: ${profile.jobPhrase}
 
 Employability Statement:
-"I translated an ambiguous stakeholder challenge into a one-week pilot for ${idea}, set baseline and target metrics, and produced evidence that improved decision quality and workflow clarity."
+"I translated an ambiguous stakeholder challenge into a one-week pilot for ${idea}, set baseline and target metrics, and produced evidence that improved decision quality, workflow clarity, and ${profile.employerSignals[0] || "continuous improvement"}."
 
-Alignment: This work demonstrates the kind of structured problem-solving employers ask for when they want people who can move from ambiguity to action. It also shows measurable execution, which makes the creativity visible as a business-relevant skill instead of a vague trait.`;
+Alignment: This work demonstrates the kind of structured problem-solving employers ask for when they want people who can move from ambiguity to action. It also maps directly to ${joinWithAnd(profile.employerSignals)} because the result is tied to a real pilot, a measurable outcome, and a visible decision.`;
 }
 
 function generateFred(profile) {
   return `WORKING BRIEF:
-Problem: ${profile.challenge}. The immediate task is to produce a response that improves clarity, ownership, and measurable follow-through for ${profile.primaryStakeholder}.
+Problem: ${profile.challenge}. The immediate task is to improve clarity, ownership, and measurable follow-through for ${profile.primaryStakeholder} while respecting ${profile.constraints}.
 Audience: ${profile.audience}
 Success looks like: ${profile.success}
 Output format: Action plan with milestones, risks, and one near-term pilot
 
 AGENT ASSIGNMENTS:
-Velma → What baseline evidence is missing, and what minimum proof does leadership need before scale?
-Daphne → Where will this approach fit or fail in the real WGU environment?
-Shaggy & Scooby → What part of this will real people actually understand, use, or ignore?
+Velma → Which baseline evidence is missing, and how do we define the minimum proof leadership would trust?
+Daphne → Where will this fit or fail given actual handoffs, incentives, and workload?
+Shaggy & Scooby → Which parts feel obvious to real people, and which parts still sound like framework language?
 
 WORKFLOW ORDER:
 1. Velma gathers evidence
@@ -842,82 +1112,82 @@ WORKFLOW ORDER:
 3. Shaggy & Scooby check for user clarity
 4. Fred assembles the final output
 
-FRED'S WATCH-OUT: The biggest risk is mistaking a broad aspiration for a testable operational move${revisionTail(profile)}.`;
+FRED'S WATCH-OUT: The biggest risk is mistaking a broad aspiration for a testable operational move when the real question is "${profile.executiveQuestions[0].replace(/\?$/, "")}"${revisionTail(profile)}.`;
 }
 
 function generateVelma(profile) {
   return `KEY INSIGHTS:
-• The prompt points to ${profile.stakeholders.length} immediate stakeholder group(s): ${profile.audience}.
-• The fastest defensible validation path is a one-week pilot with 2 measures: participation and outcome quality.
-• No verified baseline is provided in the prompt, which means leadership risk comes from acting before it can compare before and after.
+• The prompt points to ${profile.stakeholders.length} immediate stakeholder group(s): ${profile.audience}, which means the team should measure the handoff rather than the whole ecosystem.
+• The strongest local evidence pattern is ${profile.leveragePoints[0].toLowerCase()}
+• No verified baseline is provided in the prompt, so the first evidence task is to define the current state before making claims about improvement.
 
 SUPPORTING EVIDENCE:
-STAT: Demo baseline: 1 challenge statement, ${profile.stakeholders.length} stakeholder group(s), and 0 validated metrics supplied in the prompt.
+STAT: Demo design rule: 1 owner, 1 audience segment, 2 metrics, 1 short cycle.
 URL: ${DEMO_SOURCE_URL}
 Confidence: INFERRED
-Note: Local mode only counts evidence explicitly present in the user prompt.
+Note: This is the local engine's minimum standard for a credible pilot.
 
-STAT: Minimum viable validation requires 2 measures in 1 week: participation and observable outcome.
+STAT: Working evidence pattern: 3 recurring failure modes appear in this domain - ${profile.risks.slice(0, 3).join("; ")}.
 URL: ${DEMO_SOURCE_URL}
 Confidence: INFERRED
-Note: These are the two evidence checks built into the local measurement workflow.
+Note: These are domain heuristics embedded in the local knowledge base, not external research claims.
 
-STAT: 3 proof points matter before scale: audience fit, workflow fit, and measurable impact.
+STAT: Minimum viable validation still uses 2 metric families: ${joinWithAnd(profile.metrics.slice(0, 2))}.
 URL: ${DEMO_SOURCE_URL}
 Confidence: INFERRED
-Note: This is the minimum decision standard the dashboard uses for demo outputs.
+Note: The local engine favors one behavior metric and one outcome metric to keep the signal interpretable.
 
 IMPORTANT CONSTRAINTS: This run uses a local demo engine. It does not fetch external research, so all evidence claims should be verified before executive use.
 
-UNANSWERED QUESTIONS: What is the current baseline? Which segment feels the problem most acutely? Who owns the work after the pilot week ends?`;
+UNANSWERED QUESTIONS: What is the current baseline? Which segment feels the problem most acutely? What threshold would make leadership comfortable scaling or stopping?`;
 }
 
 function generateDaphne(profile) {
   return `REAL-WORLD IMPLICATIONS:
-• If ownership is diffuse, the idea will stall even if the concept is strong.
+• ${profile.leveragePoints[0]}
 • The fastest gains will come from simplifying one visible handoff, not from redesigning the whole ecosystem at once.
-• Leadership will trust this more if the test fits existing routines and reporting cadences.
+• Leadership will trust this more if the pilot fits existing routines, decision cycles, and reporting cadences.
 
 CONTEXTUAL RISKS:
-• Teams may treat this as extra work unless it clearly replaces an existing step.
-• If the pilot segment is chosen poorly, the result will be dismissed as unrepresentative.
+• ${profile.risks[0]}
+• If the pilot segment is chosen poorly, the result will be dismissed as unrepresentative rather than informative.
 
 SITUATIONAL OPPORTUNITIES:
-• A short pilot makes it easier to get permission because the ask is small and time-boxed.
-• The challenge is already concrete enough to generate visible proof quickly if the owner is named upfront.
+• A short pilot makes it easier to get permission because the ask is bounded, reversible, and evidence-seeking.
+• The challenge is concrete enough to generate visible proof quickly if the owner, segment, and threshold are named upfront.
 
-SCENARIO: In a real WGU environment, this gains traction when one program lead and one frontline team agree to test a simpler workflow for a week. It hits friction when too many stakeholders try to improve the whole system at once instead of protecting a narrow pilot lane.
+SCENARIO: In a real WGU environment, this gains traction when one program lead and one frontline team agree to test a simpler workflow for a week and treat it as a replacement rather than an addition. It hits friction when too many stakeholders try to fix the whole system at once, or when the pilot lacks a clear decision sponsor.
 
-RECOMMENDED ADJUSTMENTS: Narrow the pilot to one audience segment and one owner, then define the exact moment where clarity or decision quality should improve.`;
+RECOMMENDED ADJUSTMENTS: Narrow the pilot to one audience segment and one owner, define the exact moment where clarity or decision quality should improve, and pre-commit to the keep, revise, or stop threshold.`;
 }
 
 function generateShaggy(profile) {
   return `WHAT WORKS:
-• A short pilot is something real people can understand.
-• Focusing on one clear owner makes the plan feel more believable.
+• A short pilot is something real people can understand and tolerate.
+• Focusing on one clear owner makes the plan feel believable instead of performative.
 
 WHAT'S CONFUSING:
 • If the team says "improve the experience" without naming the exact step, people will not know what changed.
-• Too many success measures will make this feel like reporting homework.
+• If the outcome measure sounds like reporting homework instead of a fast reality check, people will stop caring.
 
 WHAT COULD BE SIMPLER:
-• Turn the goal into one sentence a student or staff member could repeat back immediately.
-• Keep the check-in to one quick question instead of a long survey.
+• Turn the goal into one sentence a student or staff member could repeat back immediately: what changes, for whom, and what happens next.
+• Keep the check-in to one quick question tied to the actual decision or action, not a long survey.
 
-REALITY CHECK: Real people will try this if it obviously saves time or makes the next step easier. They will ignore it if it sounds like another abstract framework that adds work without solving a visible pain point.
+REALITY CHECK: Real people will try this if it obviously saves time, reduces uncertainty, or makes the next step easier. They will ignore it if it sounds like another abstract framework layered on top of a messy workflow.
 
-SHAGGY & SCOOBY'S VERDICT: LIKE TOTALLY WORKS - as long as the team keeps it concrete, short, and easy to explain.`;
+SHAGGY & SCOOBY'S VERDICT: LIKE TOTALLY WORKS - as long as the team keeps it concrete, short, and visibly useful in the moment that currently feels shaky.`;
 }
 
 function generateFredFinal(profile, userMessage) {
   const idea = extractIdeaTitles(userMessage)[0] || "the simplified pilot";
   return `FRED'S SUMMARY:
-The team converged on a narrow, testable move rather than a broad redesign. The clearest recommendation is to pilot ${idea} for one week, measure participation and clarity, and use that evidence to decide whether the approach deserves scale. The real advantage is not complexity; it is visible proof inside current constraints.
+The team converged on a narrow, testable move rather than a broad redesign. The clearest recommendation is to pilot ${idea} for one week, measure ${profile.metricBlueprint.participationLabel.toLowerCase()} and ${profile.metricBlueprint.outcomeLabel.toLowerCase()}, and use that evidence to decide whether the approach deserves scale. The real advantage is not complexity; it is visible proof inside current constraints.
 
 KEY FINDINGS BY AGENT:
-Velma (Research): The main evidence gap is the missing baseline, which means the first job is to measure the current state before leadership overcommits.
+Velma (Research): The main evidence gap is the missing baseline, so the first job is to define the current state and the threshold that would justify continuation.
 Daphne (Context): This will work best when one owner protects a small pilot lane and treats simplification as a replacement, not an add-on.
-Shaggy & Scooby (Users): The idea becomes usable when the workflow is concrete, the language is plain, and the test feels short enough to try.
+Shaggy & Scooby (Users): The idea becomes usable when the workflow is concrete, the language is plain, and the check-in feels lightweight enough to survive real work.
 
 RECOMMENDATION:
 Run a one-week pilot of ${idea} with one audience segment, one owner, and two visible metrics.
@@ -946,23 +1216,23 @@ function generateTony(profile) {
   return `Selected Perspective: Tony Stark
 
 Stark's Take:
-You're treating ${profile.focusArea} like it needs a committee when it really needs a working prototype. Build the smallest visible fix first${revisionTail(profile, "while accounting for")} and let the results embarrass the slow thinkers.
+You're treating ${profile.focusArea} like it needs a committee when it really needs a working prototype. Build the smallest visible fix first${revisionTail(profile, "while accounting for")} and let the results embarrass the slow thinkers. ${profile.leveragePoints[0]}
 
 What to Build Right Now:
-Create a one-screen or one-page version of the workflow that removes the messiest handoff and puts the next action in plain view.
+Create a one-screen or one-page version of the workflow that removes the messiest handoff, names the owner, and puts the next action in plain view.
 
 The Shortcut Nobody's Seeing:
-You do not need a better presentation; you need a tighter decision point. Shrink the problem to the one moment where people stall and instrument that moment.
+You do not need a better presentation; you need a tighter decision point. Shrink the problem to the one moment where people stall, instrument that moment, and let the exception cases show you where the design is lying.
 
 Rapid Test:
-Run it with one segment for 48 hours, count completions, and ask one question: "Was the next step obvious?"`;
+Run it with one segment for 48 hours, count completions, and ask one question tied to the actual move: "Was the next step obvious enough to act on immediately?"`;
 }
 
 function generateSteve(profile) {
   return `Selected Perspective: Steve Rogers
 
 Rogers' Take:
-The right move is the one that helps ${profile.primaryStakeholder} most clearly, not the one that sounds most strategic in a meeting. If the team cannot explain who benefits and how, it is not ready yet.
+The right move is the one that helps ${profile.primaryStakeholder} most clearly, not the one that sounds most strategic in a meeting. If the team cannot explain who benefits, who carries the burden, and how success will be judged, it is not ready yet.
 
 The Right Thing to Do:
 Choose the smallest change that makes the experience fairer, clearer, and easier to trust.
@@ -971,7 +1241,7 @@ Who This Actually Affects:
 This affects ${profile.audience}. The people most likely to get overlooked are the ones already carrying the most confusion or the least time.
 
 Leadership Move:
-Name one owner, protect the pilot from scope creep, and commit to learning from the result instead of defending the original plan.`;
+Name one owner, protect the pilot from scope creep, and commit to learning from the result instead of defending the original plan. That is what responsible leadership looks like under real constraints.`;
 }
 
 function generateBruce(profile) {
@@ -981,7 +1251,7 @@ Banner's Take:
 We have a plausible hypothesis, not proof. Before we scale anything, we should make sure the signal we think we are seeing is actually tied to the workflow change and not to noise.
 
 What the Evidence Says:
-What we know is mostly structural: there is a challenge, there are affected stakeholders, and there is no verified baseline yet. The first scientific move is to define the current state, then test one change at a time.
+What we know is mostly structural: there is a challenge, there are affected stakeholders, and there is no verified baseline yet. The first scientific move is to define the current state, test one change at a time, and avoid mixing multiple interventions before the team understands the signal.
 
 Variables to Watch:
 1. Whether the pilot segment is representative
@@ -989,7 +1259,7 @@ Variables to Watch:
 3. Whether the chosen metric actually reflects the outcome leadership cares about
 
 The Assumption to Test First:
-The biggest assumption is that clarity is the primary constraint. If the real bottleneck is policy, timing, or staffing, the intervention will look weaker than it actually is.`;
+The biggest assumption is that clarity is the primary constraint. If the real bottleneck is policy, timing, staffing, or incentive misalignment, the intervention will look weaker than it actually is.`;
 }
 
 function generateNatasha(profile) {
@@ -999,13 +1269,13 @@ Romanoff's Take:
 The surface problem is ${profile.focusArea}. The real problem is that nobody wants to own the moment where the experience gets messy.
 
 What's Really Going On:
-People are probably talking about strategy because strategy is safer than naming the handoff that is actually failing. Hidden constraint: this only moves if one person is accountable for the awkward middle.
+People are probably talking about strategy because strategy is safer than naming the handoff that is actually failing. Hidden constraint: this only moves if one person is accountable for the awkward middle and someone senior protects that person from scope creep.
 
 The Leverage Point:
 Find the smallest operational move that changes what a real person sees or hears next, then make that the pilot.
 
 Execution Reality:
-One sponsor clears space, one owner runs the test, and the frontline team uses the revised script or workflow for a week. Success looks like fewer stalls, faster decisions, and less ambiguity in the handoff.`;
+One sponsor clears space, one owner runs the test, and the frontline team uses the revised script or workflow for a week. Success looks like fewer stalls, faster decisions, less ambiguity in the handoff, and a decision threshold leadership will actually honor.`;
 }
 
 function generateThor(profile) {
@@ -1015,10 +1285,10 @@ Thor's Take:
 This is not merely a workflow issue; it is a moment of hesitation where confidence must be restored. If the path is cloudy, your people will not charge forward no matter how noble the goal.
 
 The Larger Story:
-At scale, this is about whether WGU can turn uncertainty into momentum without waiting for perfect conditions. Great systems are forged when teams learn to act boldly with evidence.
+At scale, this is about whether WGU can turn uncertainty into momentum without waiting for perfect conditions. Great systems are forged when teams learn to act boldly with evidence instead of hiding behind abstraction.
 
 The Legendary Move:
-Declare a short, visible pilot, strip the process to its essentials, and prove the better path in public.
+Declare a short, visible pilot, strip the process to its essentials, and prove the better path in public so hesitation loses its power.
 
 The Battle Cry:
 Make the next step so clear that hesitation has nowhere left to hide.`;
@@ -1030,15 +1300,15 @@ function generateDecisionMemo(profile, userMessage) {
 
 Subject: ${profile.challengeLabel} - 7-Day Pilot Recommendation
 
-Context: ${profile.challenge}. The immediate need is to show whether a smaller, clearer workflow change can improve outcomes without adding cost or complexity.
+Context: ${profile.challenge}. The immediate need is to show whether a smaller, clearer workflow change can improve outcomes without adding cost or complexity, and whether the real bottleneck is clarity, ownership, or sequence.
 
 Recommendation: Pilot ${idea} with one audience segment, one owner, and two visible measures before scaling anything broader.
 
-Rationale: The strongest pattern across the stack is that the problem is too broad until it is narrowed to a single operational moment. A one-week test creates usable evidence faster than a large redesign and fits ${profile.constraints}.
+Rationale: The strongest pattern across the stack is that the problem is too broad until it is narrowed to a single operational moment. A one-week test creates usable evidence faster than a large redesign, fits ${profile.constraints}, and answers the leadership question "${profile.executiveQuestions[1].replace(/\?$/, "")}".
 
-Micro-Test: Track participation and clarity for one week, review midweek, and decide whether the workflow should be kept, revised, or stopped.
+Micro-Test: Track ${profile.metricBlueprint.participationLabel.toLowerCase()} and ${profile.metricBlueprint.outcomeLabel.toLowerCase()} for one week, review midweek, and decide whether the workflow should be kept, revised, or stopped.
 
-Risks: Scope creep will dilute the signal, and missing baseline data will make success hard to prove.
+Risks: Scope creep will dilute the signal, missing baseline data will make success hard to prove, and a weak owner will make the workflow look worse than it is.
 
 Next Step: ${profile.owner} drafts the pilot brief in the next 2 business days and launches the test in the next available week.`;
 }
@@ -1048,13 +1318,13 @@ function generatePerspectiveReport(profile) {
 
 Subject: ${profile.challengeLabel} Needs A Smaller First Move
 
-The Surprise: The most useful answer is not a bigger strategy. It is a narrower prototype that makes the next action obvious and measurable.
+The Surprise: The most useful answer is not a bigger strategy. It is a narrower prototype that makes the next action obvious, owned, and measurable.
 
-Where They Agreed: Stark, Banner, and Romanoff all converge on the same core move: shrink the problem to one operational moment, assign ownership, and test it fast.
+Where They Agreed: Stark, Banner, and Romanoff all converge on the same core move: shrink the problem to one operational moment, assign ownership, and test it fast. Rogers agrees on the need for clarity and accountability, even if he frames it as responsibility rather than leverage.
 
-Where They Disagreed: Rogers and Thor emphasize values and narrative, while Stark and Romanoff push speed and leverage. That tension reveals the real job: move quickly without losing trust or clarity.
+Where They Disagreed: Rogers and Thor emphasize values and narrative, while Stark and Romanoff push speed and leverage. Banner slows the group down by insisting on a real baseline. That tension reveals the real job: move quickly without losing trust, measurement discipline, or moral clarity.
 
-The Move: Launch one short pilot that changes the most painful handoff and instrument it immediately.
+The Move: Launch one short pilot that changes the most painful handoff, instrument it immediately, and pre-commit to the keep, revise, or stop threshold.
 
 The Frame: Treat this challenge as a proof problem first and a scale problem second.`;
 }
@@ -1069,9 +1339,9 @@ Goal: Produce visible evidence that a smaller workflow change can improve ${prof
 Executive Summary: The clearest path is to test one narrow operational change before redesigning anything broader. The team should run a one-week pilot of ${idea}, measure participation and clarity, and use that evidence to decide whether to scale, revise, or stop. This keeps the work inside current constraints while giving leadership a concrete basis for the next decision.
 
 What the Team Found:
-• Velma (Research): The baseline is missing, so the first proof requirement is a clean before-and-after comparison.
-• Daphne (Context): The pilot will work only if one owner protects a small lane and treats the change as a replacement, not an add-on.
-• Shaggy & Scooby (Users): The experience must be plain-language, short, and easy to explain or real people will not adopt it.
+• Velma (Research): The baseline is missing, so the first proof requirement is a clean before-and-after comparison tied to one behavior metric and one outcome metric.
+• Daphne (Context): The pilot will work only if one owner protects a small lane, keeps the move reversible, and treats the change as a replacement, not an add-on.
+• Shaggy & Scooby (Users): The experience must be plain-language, short, and easy to explain or real people will not adopt it in the moment that matters.
 
 Recommendation: Run a one-week pilot of ${idea} with one owner, one segment, and two metrics.
 
@@ -1908,10 +2178,10 @@ function AgentStackDemo() {
                 fontWeight: 700,
                 letterSpacing: 1
               }}>
-                LOCAL DEMO MODE · NO API KEY REQUIRED
+                ENRICHED LOCAL DEMO MODE · NO API KEY REQUIRED
               </div>
               <div style={{ fontSize: 13, color: "#475569", lineHeight: 1.5, marginTop: 6 }}>
-                Outputs are generated locally from built-in templates and your prompt. Use this mode for demos, structure reviews, and storyboard iterations rather than verified research.
+                Outputs are generated locally from built-in domain knowledge, agent heuristics, and your prompt. Use this mode for demos, structure reviews, and storyboard iterations rather than verified research.
               </div>
             </div>
           </div>

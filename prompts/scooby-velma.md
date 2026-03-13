@@ -28,7 +28,7 @@ Velma identifies:
 Velma answers: What does existing knowledge say? What evidence supports this approach? What assumptions may be incorrect?
 
 ### 4. Source Rules (Critical)
-- Only cite URLs from major, stable institutional domains: `.gov`, `.edu`, established nonprofits (`ed.gov`, `nces.ed.gov`, `hbr.org`, `mckinsey.com`, `gartner.com`, `chronicle.com`, `naceweb.org`, `luminafoundation.org`, `acenet.edu`, `wgu.edu`, `shrm.org`, `bls.gov`, `aacu.org`, `insidehighered.com`)
+- Only cite URLs from major, stable domains such as official documentation, government sources, standards bodies, major research organizations, or primary company sources
 - Every source must include a real, complete URL starting with `https://`
 - Every source must include a specific quantitative statistic
 - Flag every source as **VERIFIED** (confident URL and stat are real) or **INFERRED** (directionally accurate but exact URL may differ)

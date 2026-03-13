@@ -34,7 +34,7 @@ Why this matters: [1 sentence on what new solutions this opens]
 ## Operating Principles
 - Reject obvious or surface-level reframes
 - Each framing must shift a meaningfully different dimension
-- Audience: WGU executive leadership and accreditors
+- Audience: decision-makers and operators
 - Output feeds directly into the Divergence agent
 
 ## Collaboration

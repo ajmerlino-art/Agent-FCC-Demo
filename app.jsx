@@ -9,7 +9,7 @@ const CREATIVITY_AGENTS = [
   {
     id: "reframer", num: 1, name: "Reframer", icon: "⟁", color: "#C8A96E",
     tagline: "3 alternate framings of the problem",
-    systemPrompt: `You are the Reframer Agent in Dr. A.J. Merlino's Creativity Stack at WGU. Your job is to help leadership see a challenge from completely different angles.
+    systemPrompt: `You are the Reframer Agent in the Creativity Stack. Your job is to help teams see a challenge from completely different angles.
 
 Produce exactly 3 powerfully different framings of the input problem. Each must meaningfully shift the stakeholder, timeframe, constraint, or core assumption. Reject obvious or generic reframes — every framing must unlock a genuinely new solution space.
 
@@ -30,7 +30,7 @@ Why this matters: [1 sentence on what new solutions this opens]`
   {
     id: "divergence", num: 2, name: "Divergence", icon: "⊕", color: "#6E9EC8",
     tagline: "10 ideas · 4+ cross-domain analogies",
-    systemPrompt: `You are the Divergence Agent in Dr. A.J. Merlino's Creativity Stack at WGU. Your job is to generate a wide range of creative ideas — including unexpected ones borrowed from other fields.
+    systemPrompt: `You are the Divergence Agent in the Creativity Stack. Your job is to generate a wide range of creative ideas — including unexpected ones borrowed from other fields.
 
 Generate exactly 10 ideas. At least 4 must be cross-domain analogies drawn from fields like theater, ecology, architecture, medicine, game design, jazz, or military strategy. No generic ideas. No ideas requiring new budget, tools, or significant time.
 
@@ -44,15 +44,15 @@ Number all 10 ideas sequentially.`
   {
     id: "contrarian", num: 3, name: "Contrarian", icon: "⊘", color: "#E88E8E",
     tagline: "Risk · bias · genericity critique",
-    systemPrompt: `You are the Contrarian Agent in Dr. A.J. Merlino's Creativity Stack at WGU. Your job is to stress-test the top 3 ideas before any resources are committed.
+    systemPrompt: `You are the Contrarian Agent in the Creativity Stack. Your job is to stress-test the top 3 ideas before any resources are committed.
 
-Critique the 3 most promising ideas from the previous step across four dimensions: academic/institutional risk, industry relevance risk, hidden bias or flawed assumptions, and genericity (is this truly novel?). Ground every critique in something observable — no vague concerns.
+Critique the 3 most promising ideas from the previous step across four dimensions: operational risk, stakeholder relevance risk, hidden bias or flawed assumptions, and genericity (is this truly novel?). Ground every critique in something observable — no vague concerns.
 
 Write in clear, direct prose. Use this exact format:
 
 IDEA: [Idea Title]
-Academic Risk: [1-2 sentences]
-Industry Risk: [1-2 sentences]
+Operational Risk: [1-2 sentences]
+Stakeholder Risk: [1-2 sentences]
 Bias: [1-2 sentences]
 Genericity: [1-2 sentences]
 Verdict: KEEP / REVISE / CUT — [one sentence rationale]
@@ -62,7 +62,7 @@ Repeat for all 3 ideas.`
   {
     id: "measurement", num: 4, name: "Measurement", icon: "◫", color: "#8EE8C0",
     tagline: "1-week micro-test design",
-    systemPrompt: `You are the Measurement Agent in Dr. A.J. Merlino's Creativity Stack at WGU. Your job is to design a rigorous, low-cost test that generates real evidence fast.
+    systemPrompt: `You are the Measurement Agent in the Creativity Stack. Your job is to design a rigorous, low-cost test that generates real evidence fast.
 
 Design a 1-week micro-test for the single best surviving idea. Every metric must have a baseline and a target. No new budget, tools, or significant time required.
 
@@ -84,20 +84,20 @@ Success Criteria: [The specific threshold that means this idea is worth pursuing
   },
   {
     id: "translator", num: 5, name: "Translator", icon: "◈", color: "#BE8EE8",
-    tagline: "Employability statement for the best idea",
-    systemPrompt: `You are the Translator Agent in Dr. A.J. Merlino's Creativity Stack at WGU. Your job is to connect the best idea to real-world career value so students and faculty can see its relevance.
+    tagline: "Stakeholder value translation for the best idea",
+    systemPrompt: `You are the Translator Agent in the Creativity Stack. Your job is to connect the best idea to a form of value that decision-makers and stakeholders immediately understand.
 
-Translate the single best idea into one powerful employability statement. The statement must include a measurable outcome. Tie it to a real job-posting phrase.
+Translate the single best idea into one powerful value statement. The statement must include a measurable outcome. Tie it to language a decision-maker or stakeholder would actually recognize.
 
 Write in clear, direct prose. Use this exact format:
 
-Role Type: [The job category this connects to]
-Job Posting Phrase: [The exact phrase a hiring manager would use]
+Audience Type: [The stakeholder group this matters to]
+Decision-Maker Phrase: [The phrase a leader, operator, or stakeholder would actually use]
 
-Employability Statement:
+Value Statement:
 "[The full statement, written in first person, including a measurable outcome]"
 
-Alignment: [2-3 sentences explaining why this idea builds the skill or credential the market wants]`
+Alignment: [2-3 sentences explaining why this idea matters in practical, strategic, or operational terms]`
   }
 ];
 
@@ -105,7 +105,7 @@ const SCOOBY_AGENTS = [
   {
     id: "fred", num: 1, name: "Fred", icon: "⬡", color: "#4A90D9",
     tagline: "Problem framing · task organization · workflow coordination",
-    systemPrompt: `You are Fred, the Project Manager and Organizer in Dr. A.J. Merlino's Scooby Stack at WGU. Your role is orchestration, clarity, and structure — not deep research or design work.
+    systemPrompt: `You are Fred, the Project Manager and Organizer in the Scooby Stack. Your role is orchestration, clarity, and structure — not deep research or design work.
 
 Begin every task by clarifying: What problem are we solving? Who is the audience? What does success look like? What format should the final output take?
 
@@ -135,10 +135,10 @@ FRED'S WATCH-OUT: [One sentence on the biggest risk of drifting off track for th
   {
     id: "velma", num: 2, name: "Velma", icon: "◈", color: "#E8A830",
     tagline: "Research · evidence · verified sources",
-    systemPrompt: `You are Velma, the Research and Analysis agent in Dr. A.J. Merlino's Scooby Stack at WGU. Your job is to ensure the team works from facts, not assumptions. Prioritize accuracy over speed. If something cannot be verified, say so clearly.
+    systemPrompt: `You are Velma, the Research and Analysis agent in the Scooby Stack. Your job is to ensure the team works from facts, not assumptions. Prioritize accuracy over speed. If something cannot be verified, say so clearly.
 
 CRITICAL RULES FOR SOURCES:
-- Only cite URLs from major, stable institutional domains: .gov, .edu, established nonprofits (ed.gov, nces.ed.gov, hbr.org, mckinsey.com, gartner.com, chronicle.com, naceweb.org, luminafoundation.org, acenet.edu, wgu.edu, shrm.org, bls.gov, aacu.org, insidehighered.com)
+- Only cite URLs from major, stable domains such as official documentation, government sources, standards bodies, major research organizations, or primary company sources
 - Every source MUST include a real, complete URL starting with https://
 - Every source MUST include a specific quantitative statistic
 - Flag every source: VERIFIED (confident URL and stat are real) or INFERRED (directionally accurate but exact URL may differ)
@@ -165,7 +165,7 @@ UNANSWERED QUESTIONS: [What evidence is still missing that the team should seek?
   {
     id: "daphne", num: 3, name: "Daphne", icon: "◇", color: "#C85FA8",
     tagline: "Real-world context · practical implications · scenario thinking",
-    systemPrompt: `You are Daphne, the Field Insight and Contextual Awareness agent in Dr. A.J. Merlino's Scooby Stack at WGU. Your job is to translate Velma's research into practical understanding of how things actually work in real environments. Prioritize practicality over theory.
+    systemPrompt: `You are Daphne, the Field Insight and Contextual Awareness agent in the Scooby Stack. Your job is to translate Velma's research into practical understanding of how things actually work in real environments. Prioritize practicality over theory.
 
 Consider: organizational dynamics, industry norms, cultural expectations, operational constraints. Identify what will realistically work, what may fail in practice, and potential unintended consequences.
 
@@ -184,14 +184,14 @@ SITUATIONAL OPPORTUNITIES:
 • [What does the context reveal that creates an opening?]
 • [Opportunity 2]
 
-SCENARIO: [2-3 sentences imagining how this idea would actually play out in a real WGU or higher ed environment — where does it gain traction, and where does it hit friction?]
+SCENARIO: [2-3 sentences imagining how this idea would actually play out in a real organization or market context — where does it gain traction, and where does it hit friction?]
 
 RECOMMENDED ADJUSTMENTS: [1-2 specific changes to the approach that would make it more likely to succeed in the real environment]`
   },
   {
     id: "shaggy", num: 4, name: "Shaggy & Scooby", icon: "◉", color: "#71B560",
     tagline: "User perspective · simplicity check · reality test",
-    systemPrompt: `You are Shaggy and Scooby, the User Perspective and Reality Check agents in Dr. A.J. Merlino's Scooby Stack at WGU. You represent the everyday user. Your job is to test whether ideas are understandable, practical, and usable for real people. If something feels confusing, complicated, or unrealistic — say so directly.
+    systemPrompt: `You are Shaggy and Scooby, the User Perspective and Reality Check agents in the Scooby Stack. You represent the everyday user. Your job is to test whether ideas are understandable, practical, and usable for real people. If something feels confusing, complicated, or unrealistic — say so directly.
 
 Prioritize simplicity over sophistication, clarity over cleverness, human experience over theory.
 
@@ -209,14 +209,14 @@ WHAT COULD BE SIMPLER:
 • [A specific step, phrase, or concept that needs to be simplified — and how]
 • [Simplification 2]
 
-REALITY CHECK: [2-3 sentences — would a real student, faculty member, or staff person at WGU actually use this? What would make them adopt it, and what would make them ignore it?]
+REALITY CHECK: [2-3 sentences — would a real user, operator, or customer actually use this? What would make them adopt it, and what would make them ignore it?]
 
 SHAGGY & SCOOBY'S VERDICT: LIKE TOTALLY WORKS / NEEDS WORK / ZOINKS NO WAY — [One honest sentence on whether this is ready for real people]`
   },
   {
     id: "fred-final", num: 5, name: "Fred (Final Assembly)", icon: "⬡", color: "#4A90D9",
     tagline: "Synthesis · structured deliverable · executive summary",
-    systemPrompt: `You are Fred, completing your role as Project Manager in Dr. A.J. Merlino's Scooby Stack at WGU. All agents have reported back. Your job now is to compile their contributions into a structured, polished final deliverable for WGU executive leadership.
+    systemPrompt: `You are Fred, completing your role as Project Manager in the Scooby Stack. All agents have reported back. Your job now is to compile their contributions into a structured, polished final deliverable for decision-makers.
 
 Prioritize clarity over complexity, structure over chaos, action over theory. Do not drift from the original problem. Synthesize — don't just repeat each agent.
 
@@ -231,7 +231,7 @@ Daphne (Context): [1-2 sentence synthesis of the most important real-world insig
 Shaggy & Scooby (Users): [1-2 sentence synthesis of the user reality check]
 
 RECOMMENDATION:
-[The single clearest action WGU should take — specific and direct]
+[The single clearest action the organization should take — specific and direct]
 
 MILESTONES:
 1. [Title] | Owner: [Role] | Deadline: [Timeframe]
@@ -252,7 +252,7 @@ const AVENGERS_AGENTS = [
   {
     id: "stark", num: 1, name: "Tony Stark", icon: "⚙", color: "#E8333A",
     tagline: "Inventor · rapid prototyper · build it now",
-    systemPrompt: `You are Tony Stark — inventor, rapid prototyper, and the person who builds something before anyone else finishes their sentence. You are responding to a challenge as part of Dr. A.J. Merlino's Avengers Stack at WGU.
+    systemPrompt: `You are Tony Stark — inventor, rapid prototyper, and the person who builds something before anyone else finishes their sentence. You are responding to a challenge as part of the Avengers Stack.
 
 Your mental model: build first, refine later. Technology and automation are always on the table. You don't wait for permission or perfect conditions. You find the fastest path from idea to working prototype.
 
@@ -277,7 +277,7 @@ Rapid Test:
   {
     id: "rogers", num: 2, name: "Steve Rogers", icon: "✦", color: "#1A56B0",
     tagline: "Values · leadership · long-term responsibility",
-    systemPrompt: `You are Steve Rogers — Captain America. You evaluate whether ideas align with purpose, responsibility, and long-term impact. You are responding to a challenge as part of Dr. A.J. Merlino's Avengers Stack at WGU.
+    systemPrompt: `You are Steve Rogers — Captain America. You evaluate whether ideas align with purpose, responsibility, and long-term impact. You are responding to a challenge as part of the Avengers Stack.
 
 Your mental model: doing the right thing matters more than doing the easy thing. You think about who benefits, who gets left behind, and what kind of leadership this moment requires. You're not cynical — you genuinely believe people can rise to the occasion.
 
@@ -302,7 +302,7 @@ Leadership Move:
   {
     id: "banner", num: 3, name: "Bruce Banner", icon: "◎", color: "#3A9E5A",
     tagline: "Analytical · evidence-driven · systematic thinker",
-    systemPrompt: `You are Bruce Banner — scientist, analyst, and the most careful thinker in the room. You are responding to a challenge as part of Dr. A.J. Merlino's Avengers Stack at WGU.
+    systemPrompt: `You are Bruce Banner — scientist, analyst, and the most careful thinker in the room. You are responding to a challenge as part of the Avengers Stack.
 
 Your mental model: don't act until you understand the variables. Assumptions are the enemy. Evidence is the only real foundation. You're not slow — you're precise.
 
@@ -327,7 +327,7 @@ The Assumption to Test First:
   {
     id: "romanoff", num: 4, name: "Natasha Romanoff", icon: "◆", color: "#8B1A1A",
     tagline: "Strategic operator · human dynamics · leverage points",
-    systemPrompt: `You are Natasha Romanoff — Black Widow. You operate at the intersection of strategy and human reality. You are responding to a challenge as part of Dr. A.J. Merlino's Avengers Stack at WGU.
+    systemPrompt: `You are Natasha Romanoff — Black Widow. You operate at the intersection of strategy and human reality. You are responding to a challenge as part of the Avengers Stack.
 
 Your mental model: every situation has hidden dynamics, unstated agendas, and leverage points most people miss. You read people and systems simultaneously. Execution matters more than theory.
 
@@ -352,7 +352,7 @@ Execution Reality:
   {
     id: "thor", num: 5, name: "Thor", icon: "⚡", color: "#7B5EA7",
     tagline: "Mythic storyteller · bold vision · narrative reframe",
-    systemPrompt: `You are Thor — son of Odin, god of thunder, and the one who sees problems as epic stories. You are responding to a challenge as part of Dr. A.J. Merlino's Avengers Stack at WGU.
+    systemPrompt: `You are Thor — son of Odin, god of thunder, and the one who sees problems as epic stories. You are responding to a challenge as part of the Avengers Stack.
 
 Your mental model: every problem is part of a larger story. The right frame can transform confusion into clarity and small thinking into bold action. Legends are made in moments like this one.
 
@@ -379,11 +379,11 @@ The Battle Cry:
 const STACKS = {
   "creativity-stack": {
     id: "creativity-stack", label: "Creativity Stack", color: "#C8A96E",
-    outputType: "Decision Memo", audience: "WGU exec & accreditors",
+    outputType: "Decision Memo", audience: "decision-makers and operators",
     gates: ["Novelty", "Feasibility", "Evidence"],
     agents: CREATIVITY_AGENTS,
     buildFinalPrompt: (input, outputs) =>
-      `You are a synthesis agent for Dr. A.J. Merlino's Creativity Stack at WGU. Write a formal Decision Memo for WGU executive leadership and accreditors.
+      `You are a synthesis agent for the Creativity Stack. Write a formal Decision Memo for decision-makers.
 
 Original challenge: ${input}
 
@@ -410,11 +410,11 @@ Next Step: [One concrete action with a named owner and a date]`
   },
   "avengers-stack": {
     id: "avengers-stack", label: "Avengers Stack", color: "#E8333A",
-    outputType: "Perspective Report", audience: "WGU exec & accreditors",
+    outputType: "Perspective Report", audience: "decision-makers and strategists",
     gates: ["Unexpected", "Reframe", "Bold"],
     agents: AVENGERS_AGENTS,
     buildFinalPrompt: (input, outputs) =>
-      `You are a synthesis agent for Dr. A.J. Merlino's Avengers Stack at WGU. Five Avengers — Tony Stark, Steve Rogers, Bruce Banner, Natasha Romanoff, and Thor — have each responded to the challenge from their own perspective. Your job is to synthesize their thinking into a single, surprising, and actionable Perspective Report for WGU leadership.
+      `You are a synthesis agent for the Avengers Stack. Five Avengers — Tony Stark, Steve Rogers, Bruce Banner, Natasha Romanoff, and Thor — have each responded to the challenge from their own perspective. Your job is to synthesize their thinking into a single, surprising, and actionable Perspective Report for decision-makers.
 
 The goal is not correctness — it is unexpected insight. Find the pattern across five very different mental models and turn it into something useful.
 
@@ -437,14 +437,14 @@ Where They Disagreed: [The sharpest tension between perspectives — and what th
 
 The Move: [The single most actionable thing to do next — not the safest thing, the most interesting one that the team's collective thinking points toward]
 
-The Frame: [One sentence that reframes the entire challenge in a way that opens up new thinking — something that could change how WGU leadership thinks about this problem]`
+The Frame: [One sentence that reframes the entire challenge in a way that opens up new thinking — something that could change how decision-makers think about this problem]`
   },
   "scooby-stack": {
     id: "scooby-stack", label: "Scooby Stack", color: "#4A90D9",
-    outputType: "Action Plan", audience: "WGU exec & accreditors",
+    outputType: "Action Plan", audience: "leaders and operators",
     agents: SCOOBY_AGENTS,
     buildFinalPrompt: (input, outputs) =>
-      `You are a synthesis agent for Dr. A.J. Merlino's Scooby Stack at WGU. The full team — Fred, Velma, Daphne, and Shaggy & Scooby — has completed their work. Compile everything into a polished, executive-ready Action Plan for WGU leadership.
+      `You are a synthesis agent for the Scooby Stack. The full team — Fred, Velma, Daphne, and Shaggy & Scooby — has completed their work. Compile everything into a polished, executive-ready Action Plan for decision-makers.
 
 Original challenge: ${input}
 
@@ -458,7 +458,7 @@ ACTION PLAN
 Title: [Plan title]
 Goal: [One sentence goal statement]
 
-Executive Summary: [3-4 sentences for WGU leadership — lead with the recommendation, not the process. Confident, jargon-free.]
+Executive Summary: [3-4 sentences for decision-makers — lead with the recommendation, not the process. Confident, jargon-free.]
 
 What the Team Found:
 • Velma (Research): [Most important evidence finding with a stat]
@@ -495,143 +495,47 @@ const STOPWORDS = new Set([
 ]);
 
 const KNOWLEDGE_BANK = {
-  student_success: {
+  user_experience: {
     leveragePoints: [
-      "The highest-leverage move is usually the first ambiguous next step, not the entire journey.",
-      "Students interpret silence as risk, so fast reassurance often beats more information.",
-      "Designing for the hardest handoff reveals what the standard path is hiding."
+      "The highest-leverage move is usually the first ambiguous next step, not the whole journey.",
+      "People interpret silence and ambiguity as risk, so reassurance and clarity often outperform more information.",
+      "Designing for the highest-friction handoff reveals what the normal path is hiding."
     ],
     risks: [
-      "Average-case design masks learners managing work, family, transfer, or re-entry complexity.",
-      "If the change adds work to mentors or advisors, adoption will fall quickly.",
-      "A better script still fails when the escalation path behind it is unclear."
+      "Average-case design hides the needs of edge cases and high-friction segments.",
+      "A clearer message still fails when the fallback path is weak.",
+      "Adding detail can increase cognitive load if the next action is still vague."
     ],
     metrics: [
-      "next-step completion",
+      "task completion",
       "time-to-next-action",
-      "clarity or confidence after the touchpoint"
+      "clarity or confidence after the interaction"
     ],
     userLens: [
-      "People act when the next move feels obvious and low-risk.",
+      "People act when the next step feels obvious and low-risk.",
       "Trust grows when the system signals progress quickly.",
-      "Plain-language guidance beats hidden policy detail."
+      "Plain language beats insider terminology."
     ],
     executiveQuestions: [
-      "Which moment creates avoidable drop-off right now?",
-      "What proof would show the handoff is actually clearer in one cycle?",
-      "Which segment carries the most invisible friction?"
+      "Where do people hesitate or stall right now?",
+      "What would make the next move feel obvious in one cycle?",
+      "Which segment experiences the most hidden friction?"
     ],
-    employerSignals: [
-      "service design under real constraints",
-      "evidence-driven improvement",
-      "cross-functional execution"
+    stakeholderSignals: [
+      "customer clarity",
+      "service reliability",
+      "reduced friction"
     ]
   },
-  learning_design: {
-    leveragePoints: [
-      "Faculty adoption improves when a change reduces prep, grading, or ambiguity rather than adding process.",
-      "The right level of detail is the minimum needed to change behavior consistently.",
-      "Exceptions are where instructional design quality is exposed."
-    ],
-    risks: [
-      "A pedagogically elegant solution can fail if it ignores faculty workload.",
-      "Content fixes often compensate for a sequencing or assessment problem.",
-      "Standardization without rationale gets treated as compliance theater."
-    ],
-    metrics: [
-      "faculty adoption rate",
-      "time saved in the workflow",
-      "quality or consistency of learner outputs"
-    ],
-    userLens: [
-      "Faculty keep what is teachable, reusable, and easy to explain.",
-      "Students notice sequence and feedback before they notice strategy language.",
-      "A smaller rubric shift can outperform a full redesign if the signal is clearer."
-    ],
-    executiveQuestions: [
-      "Does this reduce cognitive load for faculty and students at the same time?",
-      "Where is the current design asking people to infer too much?",
-      "What single step would make quality more consistent next term?"
-    ],
-    employerSignals: [
-      "learning systems design",
-      "operationalization of quality standards",
-      "measurable process improvement"
-    ]
-  },
-  employability: {
-    leveragePoints: [
-      "Employer-readable evidence is clearer when it names behavior, outcome, and context together.",
-      "Translation matters most at the point where academic work must become market signal.",
-      "Small measurable wins are easier to trust than broad skill claims."
-    ],
-    risks: [
-      "Skill language becomes generic when it is not anchored to a real artifact or result.",
-      "Labor-market framing can overwhelm academic purpose if it is bolted on at the end.",
-      "A strong experience still gets discounted if nobody can explain it in hiring language."
-    ],
-    metrics: [
-      "artifact completion",
-      "quality of evidence statements",
-      "alignment to job-posting language"
-    ],
-    userLens: [
-      "People need examples of how to describe their work, not just encouragement to do it.",
-      "Translation should preserve honesty while increasing legibility.",
-      "A measurable outcome makes the skill claim far more credible."
-    ],
-    executiveQuestions: [
-      "How will this show up in a portfolio, resume bullet, or interview story?",
-      "What market-facing phrase does this actually support?",
-      "Which result makes the learning visible to an outsider?"
-    ],
-    employerSignals: [
-      "structured problem-solving",
-      "continuous improvement",
-      "communication tied to measurable outcomes"
-    ]
-  },
-  leadership_change: {
-    leveragePoints: [
-      "Leaders move faster when scope is bounded, owner is named, and downside is contained.",
-      "Decision quality improves when the team defines the keep, revise, or stop threshold in advance.",
-      "A small proof point beats a large abstract recommendation."
-    ],
-    risks: [
-      "Strategic language can hide the lack of an operating owner.",
-      "A good idea loses credibility when the pilot lane is too broad.",
-      "Reporting overhead can destroy the speed needed for experimentation."
-    ],
-    metrics: [
-      "decision turnaround time",
-      "pilot completion rate",
-      "leadership confidence in next-step clarity"
-    ],
-    userLens: [
-      "Executives want a recommendation, a reason, and a bounded risk story.",
-      "Sponsors support pilots that look reversible and evidence-seeking.",
-      "Momentum comes from visible progress, not presentation volume."
-    ],
-    executiveQuestions: [
-      "What would make this safe enough to test now?",
-      "Who owns the work between the meeting and the result?",
-      "What threshold would justify scaling or stopping?"
-    ],
-    employerSignals: [
-      "decision framing",
-      "change leadership",
-      "risk-managed experimentation"
-    ]
-  },
-  workflow_ops: {
+  operations: {
     leveragePoints: [
       "Friction usually lives at boundaries between roles, systems, or decision rights.",
       "Exceptions reveal the true design of a workflow faster than average cases do.",
-      "Queue visibility and escalation rules are often more important than more documentation."
+      "Queue visibility and escalation rules often matter more than extra documentation."
     ],
     risks: [
       "A cleaner handoff can still fail if upstream incentives remain unchanged.",
-      "Teams over-diagnose communication when the real problem is sequencing or ownership.",
+      "Teams often blame communication when the real issue is sequencing or ownership.",
       "Hidden parallel work makes the visible workflow look simpler than it really is."
     ],
     metrics: [
@@ -642,17 +546,113 @@ const KNOWLEDGE_BANK = {
     userLens: [
       "People adopt workflows that remove ambiguity from their next action.",
       "A visible rule is more reliable than an implied expectation.",
-      "Short feedback loops improve consistency faster than additional policy."
+      "Short feedback loops improve consistency faster than more policy."
     ],
     executiveQuestions: [
       "Where does the work stall today?",
       "Which exception type should shape the design first?",
-      "What is the smallest boundary change that would reduce rework?"
+      "What boundary change would reduce rework fastest?"
     ],
-    employerSignals: [
-      "process design",
+    stakeholderSignals: [
+      "process discipline",
       "cross-functional coordination",
-      "operational troubleshooting"
+      "operational resilience"
+    ]
+  },
+  product_service: {
+    leveragePoints: [
+      "Adoption rises when the value exchange is visible early, not after a long explanation.",
+      "A smaller prototype often teaches more than a polished concept deck.",
+      "Reducing effort at the first moment of use can matter more than adding capability later."
+    ],
+    risks: [
+      "Teams can overbuild before they prove the core behavior change.",
+      "A compelling concept still fails when the entry step is confusing.",
+      "Internal enthusiasm can mask weak real-world value."
+    ],
+    metrics: [
+      "first-use completion",
+      "repeat usage",
+      "success without intervention"
+    ],
+    userLens: [
+      "People judge value by how quickly they get to a useful outcome.",
+      "A working artifact beats a promise.",
+      "Visible progress increases tolerance for rough edges."
+    ],
+    executiveQuestions: [
+      "What is the smallest version worth trying now?",
+      "Which moment proves the value proposition fastest?",
+      "What would users notice immediately if this worked?"
+    ],
+    stakeholderSignals: [
+      "value proposition clarity",
+      "adoption quality",
+      "faster iteration"
+    ]
+  },
+  change_leadership: {
+    leveragePoints: [
+      "Leaders move faster when scope is bounded, owner is named, and downside is contained.",
+      "Decision quality improves when keep, revise, or stop thresholds are defined in advance.",
+      "A small proof point beats a large abstract recommendation."
+    ],
+    risks: [
+      "Strategic language can hide the lack of an operating owner.",
+      "A good idea loses credibility when the pilot lane is too broad.",
+      "Reporting overhead can destroy the speed needed for experimentation."
+    ],
+    metrics: [
+      "decision turnaround time",
+      "pilot completion rate",
+      "next-step clarity"
+    ],
+    userLens: [
+      "Decision-makers want a recommendation, a reason, and a bounded risk story.",
+      "Sponsors support pilots that look reversible and evidence-seeking.",
+      "Momentum comes from visible progress, not presentation volume."
+    ],
+    executiveQuestions: [
+      "What would make this safe enough to test now?",
+      "Who owns the work between the meeting and the result?",
+      "What threshold would justify scaling or stopping?"
+    ],
+    stakeholderSignals: [
+      "decision framing",
+      "change leadership",
+      "risk-managed experimentation"
+    ]
+  },
+  market_strategy: {
+    leveragePoints: [
+      "Stakeholders trust a position faster when it names the problem, the gain, and the tradeoff clearly.",
+      "Message clarity is strongest when tied to a real decision or buying moment.",
+      "A sharp promise is more useful than a broad claim."
+    ],
+    risks: [
+      "Teams can mistake internal language for market language.",
+      "A strong offer still fails when the proof point is vague.",
+      "Broad positioning often hides a weak target segment."
+    ],
+    metrics: [
+      "message recall",
+      "conversion or commitment",
+      "stakeholder alignment"
+    ],
+    userLens: [
+      "People respond faster to clear gains than to abstract positioning.",
+      "The right phrase should be easy to repeat without translation.",
+      "Trust increases when claims are matched with proof."
+    ],
+    executiveQuestions: [
+      "What phrase would an external stakeholder actually repeat?",
+      "Which segment should recognize this value first?",
+      "What proof point makes the story credible?"
+    ],
+    stakeholderSignals: [
+      "market relevance",
+      "narrative clarity",
+      "commercial traction"
     ]
   },
   measurement: {
@@ -663,8 +663,8 @@ const KNOWLEDGE_BANK = {
     ],
     risks: [
       "Teams often measure activity and call it impact.",
-      "If the target segment is too mixed, the signal will blur.",
-      "A weak check-in cadence makes learning lag behind execution."
+      "Mixed target segments blur the signal.",
+      "A weak review cadence makes learning lag behind execution."
     ],
     metrics: [
       "participation",
@@ -674,14 +674,14 @@ const KNOWLEDGE_BANK = {
     userLens: [
       "People trust measures they can collect without extra tooling.",
       "Two metrics sustained well beat six metrics collected badly.",
-      "The best pilot evidence is timely enough to change the next week of work."
+      "The best pilot evidence arrives fast enough to change the next cycle of work."
     ],
     executiveQuestions: [
       "What baseline will make improvement defensible?",
       "What result would count as enough evidence to continue?",
       "How quickly will the team review and adjust?"
     ],
-    employerSignals: [
+    stakeholderSignals: [
       "experimental design",
       "evidence-based iteration",
       "metrics literacy"
@@ -773,14 +773,14 @@ function extractKeywords(text, limit = 6) {
 function detectStakeholders(lower) {
   const stakeholders = [];
 
-  if (/student/.test(lower)) stakeholders.push("students");
-  if (/faculty|instructor|course/.test(lower)) stakeholders.push("faculty");
-  if (/mentor|advisor|coach|staff/.test(lower)) stakeholders.push("frontline staff");
-  if (/leader|leadership|executive|dean/.test(lower)) stakeholders.push("leadership");
-  if (/employer|industry|career|hiring/.test(lower)) stakeholders.push("employers");
+  if (/user|customer|client|buyer|member|audience|consumer/.test(lower)) stakeholders.push("users");
+  if (/team|staff|operator|manager|employee|specialist/.test(lower)) stakeholders.push("operators");
+  if (/leader|leadership|executive|sponsor|director|owner/.test(lower)) stakeholders.push("decision-makers");
+  if (/partner|vendor|supplier|agency/.test(lower)) stakeholders.push("partners");
+  if (/market|public|community|external/.test(lower)) stakeholders.push("external stakeholders");
 
   if (!stakeholders.length) {
-    stakeholders.push("students", "faculty", "program leadership");
+    stakeholders.push("users", "operators", "decision-makers");
   }
 
   return [...new Set(stakeholders)];
@@ -793,10 +793,13 @@ function joinWithAnd(values) {
 }
 
 function detectOwner(lower) {
-  if (/career|employer|industry/.test(lower)) return "Employer engagement lead";
-  if (/student|mentor|advisor|retention/.test(lower)) return "Student success lead";
-  if (/faculty|course|curriculum/.test(lower)) return "Program chair";
-  return "Program lead";
+  if (/customer|client|service|support|experience/.test(lower)) return "Experience lead";
+  if (/process|workflow|operation|system|handoff|intake/.test(lower)) return "Operations lead";
+  if (/product|feature|design|prototype|service/.test(lower)) return "Product lead";
+  if (/strategy|change|initiative|leadership|sponsor/.test(lower)) return "Initiative lead";
+  if (/market|sales|growth|brand|partner/.test(lower)) return "Strategy lead";
+  if (/data|metric|research|insight/.test(lower)) return "Insights lead";
+  return "Project lead";
 }
 
 function detectConstraints(lower) {
@@ -815,43 +818,49 @@ function detectConstraints(lower) {
 
 function detectTimeframe(lower) {
   if (/week/.test(lower)) return "the next 7 days";
-  if (/term|semester|quarter/.test(lower)) return "this academic term";
+  if (/quarter/.test(lower)) return "this quarter";
   if (/month/.test(lower)) return "the next 30 days";
   return "the next 14 days";
 }
 
 function detectSuccess(lower, keywords) {
-  if (/retention|persist|drop/.test(lower)) return "a measurable reduction in preventable drop-off";
-  if (/engagement|participation|attendance/.test(lower)) return "higher participation and clearer follow-through";
-  if (/enroll|admission|recruit|conversion/.test(lower)) return "stronger conversion with less confusion";
-  if (/career|employ|skill|workforce/.test(lower)) return "clearer evidence of employer-relevant skill growth";
+  if (/churn|drop|retention|abandon/.test(lower)) return "a measurable reduction in preventable drop-off";
+  if (/engagement|participation|activation|adoption/.test(lower)) return "higher adoption and clearer follow-through";
+  if (/conversion|sales|pipeline|demand|signup/.test(lower)) return "stronger conversion with less friction";
+  if (/quality|consistency|rework/.test(lower)) return "higher quality with less rework";
+  if (/trust|clarity|confidence/.test(lower)) return "clearer decisions and higher confidence";
+  if (/speed|cycle time|turnaround/.test(lower)) return "faster throughput without added confusion";
   return `a measurable improvement in ${keywords[0] || "the target workflow"}`;
 }
 
-function detectRoleType(lower) {
-  if (/career|employ|industry|workforce/.test(lower)) return "Workforce strategy analyst";
-  if (/faculty|course|curriculum|student/.test(lower)) return "Learning experience designer / program manager";
-  return "Operations and program improvement lead";
+function detectAudienceType(lower) {
+  if (/customer|client|user|service|support|experience/.test(lower)) return "Customer or user-facing team";
+  if (/process|workflow|operation|system|handoff/.test(lower)) return "Operations and delivery team";
+  if (/product|feature|design|prototype/.test(lower)) return "Product or service leadership";
+  if (/market|sales|growth|brand|partner/.test(lower)) return "Commercial or strategy stakeholders";
+  return "Leaders and operators";
 }
 
-function detectJobPhrase(lower) {
-  if (/career|employ|industry/.test(lower)) return "translate ambiguous needs into measurable workforce-facing outcomes";
-  if (/student|faculty|learning|course/.test(lower)) return "design and improve user-centered learning workflows";
-  return "turn ambiguous stakeholder needs into measurable process improvements";
+function detectDecisionPhrase(lower) {
+  if (/customer|client|user|service|support|experience/.test(lower)) return "reduce friction and make the next step obvious for the people using the service";
+  if (/process|workflow|operation|system|handoff/.test(lower)) return "turn ambiguity into a measurable operating improvement";
+  if (/product|feature|design|prototype/.test(lower)) return "move from concept to a working proof point quickly";
+  if (/market|sales|growth|brand|partner/.test(lower)) return "translate a vague idea into a clear value proposition with evidence";
+  return "turn ambiguous stakeholder needs into measurable, low-risk action";
 }
 
 function detectDomains(lower) {
   const domains = [];
 
-  if (/student|retention|persist|advisor|mentor|enroll|admission/.test(lower)) domains.push("student_success");
-  if (/faculty|course|curriculum|assessment|instruction|rubric/.test(lower)) domains.push("learning_design");
-  if (/career|employ|industry|workforce|job|portfolio|resume|skill/.test(lower)) domains.push("employability");
-  if (/leader|leadership|executive|sponsor|decision|strategy/.test(lower)) domains.push("leadership_change");
-  if (/workflow|process|handoff|queue|operation|system|intake/.test(lower)) domains.push("workflow_ops");
+  if (/user|customer|client|buyer|audience|member|service|support|experience/.test(lower)) domains.push("user_experience");
+  if (/workflow|process|handoff|queue|operation|system|intake|approval|execution/.test(lower)) domains.push("operations");
+  if (/product|feature|design|prototype|offering|service/.test(lower)) domains.push("product_service");
+  if (/leader|leadership|executive|sponsor|decision|strategy|change|initiative/.test(lower)) domains.push("change_leadership");
+  if (/market|sales|growth|brand|partner|revenue|demand|position/.test(lower)) domains.push("market_strategy");
   if (/metric|measure|baseline|evidence|pilot|test|data/.test(lower)) domains.push("measurement");
 
   if (!domains.length) {
-    domains.push("workflow_ops", "measurement", "leadership_change");
+    domains.push("operations", "measurement", "change_leadership");
   }
 
   return [...new Set(domains)];
@@ -870,7 +879,7 @@ function collectKnowledge(domains, field, limit = 3) {
 }
 
 function selectMetricBlueprint(domains, primaryStakeholder) {
-  if (domains.includes("student_success")) {
+  if (domains.includes("user_experience")) {
     return {
       participationLabel: `Number of ${primaryStakeholder} who complete the clarified next step`,
       participationTarget: 15,
@@ -879,21 +888,21 @@ function selectMetricBlueprint(domains, primaryStakeholder) {
     };
   }
 
-  if (domains.includes("learning_design")) {
+  if (domains.includes("operations")) {
     return {
-      participationLabel: "Number of faculty using the revised asset or workflow consistently",
-      participationTarget: 8,
-      outcomeLabel: "Share of learner outputs that meet the new quality signal",
-      outcomeTarget: "75% of sampled outputs"
+      participationLabel: "Number of handoffs completed using the revised workflow",
+      participationTarget: 12,
+      outcomeLabel: "Share of cases completed without rework or escalation",
+      outcomeTarget: "75% of tracked cases"
     };
   }
 
-  if (domains.includes("employability")) {
+  if (domains.includes("market_strategy")) {
     return {
-      participationLabel: `Number of ${primaryStakeholder} who produce a usable skill-evidence statement`,
-      participationTarget: 12,
-      outcomeLabel: "Share of statements that align to a real hiring phrase and include a measurable result",
-      outcomeTarget: "80% of reviewed statements"
+      participationLabel: "Number of target conversations or decisions using the revised message",
+      participationTarget: 10,
+      outcomeLabel: "Share of stakeholders who can repeat the value proposition accurately",
+      outcomeTarget: "80% positive recall"
     };
   }
 
@@ -931,14 +940,14 @@ function buildProfile(challenge, revisionRequest = "") {
     timeframe: detectTimeframe(lower),
     constraints: detectConstraints(lower),
     success: detectSuccess(lower, keywords),
-    roleType: detectRoleType(lower),
-    jobPhrase: detectJobPhrase(lower),
+    audienceType: detectAudienceType(lower),
+    decisionPhrase: detectDecisionPhrase(lower),
     leveragePoints: collectKnowledge(domains, "leveragePoints", 3),
     risks: collectKnowledge(domains, "risks", 3),
     metrics: collectKnowledge(domains, "metrics", 3),
     userLens: collectKnowledge(domains, "userLens", 3),
     executiveQuestions: collectKnowledge(domains, "executiveQuestions", 3),
-    employerSignals: collectKnowledge(domains, "employerSignals", 3),
+    stakeholderSignals: collectKnowledge(domains, "stakeholderSignals", 3),
     metricBlueprint,
     revisionRequest,
     revisionFocus: revisionRequest ? clipWords(revisionRequest, 12) : ""
@@ -1055,8 +1064,8 @@ function generateContrarian(profile, userMessage) {
   const verdicts = ["KEEP", "REVISE", "KEEP"];
 
   return selected.map((idea, index) => `IDEA: ${idea}
-Academic Risk: ${profile.risks[0]} If ownership is vague, the team may interpret this as another layer on top of current work instead of a cleaner operating move.
-Industry Risk: If the output never becomes an employer-readable result or a visible operational gain, external partners will treat it as internal process hygiene rather than capability building.
+Operational Risk: ${profile.risks[0]} If ownership is vague, the team may interpret this as another layer on top of current work instead of a cleaner operating move.
+Stakeholder Risk: If the output never becomes a visible stakeholder benefit or a concrete operating gain, people will treat it as internal process theater rather than real progress.
 Bias: This idea assumes the main blockage is clarity. If ${profile.executiveQuestions[0].toLowerCase()} points to staffing, policy, or incentive misalignment instead, the pilot will underperform.
 Genericity: The move becomes generic if it stops at language change and never touches sequence, decision rights, or measurable proof.
 Verdict: ${verdicts[index] || "REVISE"} - ${index === 1 ? "Keep the core move, but tighten the target segment, owner, and threshold before using it." : "This is worth testing because it changes behavior in a visible place and can generate proof inside current constraints."}`).join("\n\n");
@@ -1085,13 +1094,13 @@ Success Criteria: Continue if the team hits the participation target, reaches th
 
 function generateTranslator(profile, userMessage) {
   const idea = extractTestedIdea(userMessage) || extractIdeaTitles(userMessage)[0] || "the tested workflow";
-  return `Role Type: ${profile.roleType}
-Job Posting Phrase: ${profile.jobPhrase}
+  return `Audience Type: ${profile.audienceType}
+Decision-Maker Phrase: ${profile.decisionPhrase}
 
-Employability Statement:
-"I translated an ambiguous stakeholder challenge into a one-week pilot for ${idea}, set baseline and target metrics, and produced evidence that improved decision quality, workflow clarity, and ${profile.employerSignals[0] || "continuous improvement"}."
+Value Statement:
+"I translated an ambiguous challenge into a one-week pilot for ${idea}, set baseline and target metrics, and produced evidence that improved decision quality, workflow clarity, and ${profile.stakeholderSignals[0] || "continuous improvement"}."
 
-Alignment: This work demonstrates the kind of structured problem-solving employers ask for when they want people who can move from ambiguity to action. It also maps directly to ${joinWithAnd(profile.employerSignals)} because the result is tied to a real pilot, a measurable outcome, and a visible decision.`;
+Alignment: This work demonstrates structured problem-solving that people can recognize in practical terms. It also maps directly to ${joinWithAnd(profile.stakeholderSignals)} because the result is tied to a real pilot, a measurable outcome, and a visible decision.`;
 }
 
 function generateFred(profile) {
@@ -1156,7 +1165,7 @@ SITUATIONAL OPPORTUNITIES:
 • A short pilot makes it easier to get permission because the ask is bounded, reversible, and evidence-seeking.
 • The challenge is concrete enough to generate visible proof quickly if the owner, segment, and threshold are named upfront.
 
-SCENARIO: In a real WGU environment, this gains traction when one program lead and one frontline team agree to test a simpler workflow for a week and treat it as a replacement rather than an addition. It hits friction when too many stakeholders try to fix the whole system at once, or when the pilot lacks a clear decision sponsor.
+SCENARIO: In a real organization, this gains traction when one lead and one frontline team agree to test a simpler workflow for a week and treat it as a replacement rather than an addition. It hits friction when too many stakeholders try to fix the whole system at once, or when the pilot lacks a clear decision sponsor.
 
 RECOMMENDED ADJUSTMENTS: Narrow the pilot to one audience segment and one owner, define the exact moment where clarity or decision quality should improve, and pre-commit to the keep, revise, or stop threshold.`;
 }
@@ -1171,7 +1180,7 @@ WHAT'S CONFUSING:
 • If the outcome measure sounds like reporting homework instead of a fast reality check, people will stop caring.
 
 WHAT COULD BE SIMPLER:
-• Turn the goal into one sentence a student or staff member could repeat back immediately: what changes, for whom, and what happens next.
+• Turn the goal into one sentence a real person could repeat back immediately: what changes, for whom, and what happens next.
 • Keep the check-in to one quick question tied to the actual decision or action, not a long survey.
 
 REALITY CHECK: Real people will try this if it obviously saves time, reduces uncertainty, or makes the next step easier. They will ignore it if it sounds like another abstract framework layered on top of a messy workflow.
@@ -1285,7 +1294,7 @@ Thor's Take:
 This is not merely a workflow issue; it is a moment of hesitation where confidence must be restored. If the path is cloudy, your people will not charge forward no matter how noble the goal.
 
 The Larger Story:
-At scale, this is about whether WGU can turn uncertainty into momentum without waiting for perfect conditions. Great systems are forged when teams learn to act boldly with evidence instead of hiding behind abstraction.
+At scale, this is about whether a team can turn uncertainty into momentum without waiting for perfect conditions. Great systems are forged when people learn to act boldly with evidence instead of hiding behind abstraction.
 
 The Legendary Move:
 Declare a short, visible pilot, strip the process to its essentials, and prove the better path in public so hesitation loses its power.
@@ -1753,7 +1762,7 @@ function AgentStackDemo() {
       .join("\n\n---\n\n");
 
     const finalRes = await runLocalEngine(
-      "You are a synthesis agent for Dr. A.J. Merlino's Creative Impact Programs at WGU. Write in clear, direct prose for executive leadership and accreditors.",
+      "You are a synthesis agent. Write in clear, direct prose for decision-makers.",
       st.buildFinalPrompt(input, outputsText)
     );
 
@@ -1836,7 +1845,7 @@ function AgentStackDemo() {
 
     } else if (reviseTarget.type === "final") {
       const currentFinal = finalOutputs[sid]?.text || "";
-      const sysPrompt = "You are a synthesis agent for Dr. A.J. Merlino's Creative Impact Programs at WGU. You are in REVISION MODE. The user has reviewed the " + st.outputType + " and has specific feedback. Produce a fully revised version incorporating their request. Maintain the same format and executive-level quality.";
+      const sysPrompt = "You are a synthesis agent. You are in REVISION MODE. The user has reviewed the " + st.outputType + " and has specific feedback. Produce a fully revised version incorporating their request. Maintain the same format and executive-level quality.";
       const userMsg = `Original challenge: ${input}\n\nAgent outputs:\n${allAgentContext}\n\nCurrent ${st.outputType}:\n${currentFinal}\n\nRevision request: ${reviseInput.trim()}`;
 
       const res = await runLocalEngine(sysPrompt, userMsg);
@@ -1852,7 +1861,7 @@ function AgentStackDemo() {
     } else if (reviseTarget.type === "stack") {
       // Re-run the full stack with the revision note appended
       setRevising(false);
-      const revisedInput = input + "\n\n[REVISION NOTE FROM DR. MERLINO]: " + reviseInput.trim();
+      const revisedInput = input + "\n\n[REVISION NOTE]: " + reviseInput.trim();
       setInput(revisedInput);
       setTimeout(() => runFullStack(), 100);
       setReviseInput("");
@@ -1935,7 +1944,7 @@ function AgentStackDemo() {
       children.push(new Paragraph({ heading: HeadingLevel.HEADING_1,
         children: [new TextRun({ text: st.label + " Report", font: "Arial", bold: true, color: "111111" })] }));
       children.push(new Paragraph({ children: [
-        new TextRun({ text: "WGU  |  Creative Impact Programs  |  Dr. A.J. Merlino", size: 20, font: "Arial", color: "666666" })
+        new TextRun({ text: "General-Purpose Agent Stack Demo", size: 20, font: "Arial", color: "666666" })
       ]}));
       children.push(new Paragraph({ children: [
         new TextRun({ text: "Generated: " + now, size: 18, font: "Arial", color: "999999" })
@@ -2067,7 +2076,7 @@ function AgentStackDemo() {
           display: "flex", flexDirection: "column", gap: 3
         }}>
           <div style={{ fontSize: 15, fontFamily: "monospace", color: "#334155", letterSpacing: 2, marginBottom: 14 }}>
-            WGU / A.J. MERLINO
+            AGENT STACK STUDIO
           </div>
 
           {Object.values(STACKS).map(st => (
@@ -2134,7 +2143,7 @@ function AgentStackDemo() {
           {/* Header */}
           <div style={{ marginBottom: 20 }}>
             <div style={{ fontSize: 15, fontFamily: "monospace", color: "#334155", letterSpacing: 2, marginBottom: 4 }}>
-              CREATIVE IMPACT PROGRAMS
+              GENERAL-PURPOSE AGENT STACKS
             </div>
             <h1 style={{ fontSize: 28, fontWeight: 700, color: "#111827", letterSpacing: -0.5 }}>
               {selAgent ? (

@@ -48,7 +48,7 @@ WHAT COULD BE SIMPLER:
 • [A specific step, phrase, or concept that needs to be simplified — and how]
 • [Simplification 2]
 
-REALITY CHECK: [2-3 sentences — would a real student, faculty member, or staff person at WGU actually use this? What would make them adopt it, and what would make them ignore it?]
+REALITY CHECK: [2-3 sentences — would a real user, operator, or customer actually use this? What would make them adopt it, and what would make them ignore it?]
 
 SHAGGY & SCOOBY'S VERDICT: LIKE TOTALLY WORKS / NEEDS WORK / ZOINKS NO WAY — [One honest sentence]
 ```

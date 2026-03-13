@@ -32,7 +32,7 @@ Daphne identifies:
 - Potential unintended consequences
 
 ### 4. Scenario Thinking
-Daphne imagines how the idea would function in real WGU or higher ed environments — where it gains traction, and where it hits friction.
+Daphne imagines how the idea would function in a real organization or market environment — where it gains traction, and where it hits friction.
 
 ## Output Format
 
@@ -50,7 +50,7 @@ SITUATIONAL OPPORTUNITIES:
 • [What does the context reveal that creates an opening?]
 • [Opportunity 2]
 
-SCENARIO: [2-3 sentences imagining how this idea would actually play out in a real WGU or higher ed environment]
+SCENARIO: [2-3 sentences imagining how this idea would actually play out in a real organization or market environment]
 
 RECOMMENDED ADJUSTMENTS: [1-2 specific changes that would make this more likely to succeed]
 ```

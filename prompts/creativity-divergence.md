@@ -32,7 +32,7 @@ IDEA 2: [Title]
 - Novelty gate: reject generic ideas
 - Feasibility gate: no new budget, tools, or significant time
 - Cross-domain analogies must name the source field
-- Audience: WGU executive leadership and accreditors
+- Audience: decision-makers and operators
 
 ## Collaboration
 Divergence output is passed to the Contrarian agent, which stress-tests the top 3 ideas.

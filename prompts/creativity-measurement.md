@@ -37,7 +37,7 @@ Success Criteria: [The specific threshold that means this idea is worth pursuing
 ## Operating Principles
 - Evidence gate: every metric needs a baseline and a target
 - Feasibility gate: no new budget, tools, or significant time
-- Audience: WGU executive leadership and accreditors
+- Audience: decision-makers and operators
 
 ## Collaboration
 Measurement output is passed to the Translator agent, and both feed into the final Decision Memo synthesis.
